@@ -1,0 +1,430 @@
+% This file was created by matlab2tikz v0.2.1.
+% Copyright (c) 2008--2012, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}
+
+\begin{axis}[%
+view={0}{90},
+width=\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=350, xmax=450,
+xlabel={Source Temperature (K)},
+ymin=300, ymax=350,
+ylabel={Static Temperature (K)},
+axis lines=left,
+legend style={at={(0.03,0.97)},anchor=north west,nodes=right}]
+\addplot [
+color=black,
+only marks,
+mark=o,
+mark options={solid}
+]
+coordinates{
+ (350,312.655096897302)(375,321.626598673177)(400,330.745071084892)(425,339.984344731446)(450,349.372874694459) 
+};
+
+\addlegendentry{U = 0.2 m/s};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,312.654545115612)(375,321.62926293606)(400,330.740388986381)(425,339.987923266577)(450,349.371865776646) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=asterisk,
+mark options={solid}
+]
+coordinates{
+ (350,308.180764425938)(375,315.23777405621)(400,322.514900932077)(425,329.993676412072)(450,337.663085911781) 
+};
+
+\addlegendentry{U = 0.4 m/s};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,308.17770961682)(375,315.244096647504)(400,322.514262012901)(425,329.988205713013)(450,337.66592774784) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=+,
+mark options={solid}
+]
+coordinates{
+ (350,304.746385505233)(375,310.27841413592)(400,316.032804537682)(425,322.000126474253)(450,328.177257073985) 
+};
+
+\addlegendentry{U = 0.6 m/s};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,304.745040089233)(375,310.281285178338)(400,316.032263906429)(425,321.997976273505)(450,328.178422279568) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=x,
+mark options={solid}
+]
+coordinates{
+ (350,302.373409591706)(375,306.812631132462)(400,311.447573722019)(425,316.27323464473)(450,321.290029964275) 
+};
+
+\addlegendentry{U = 0.8 m/s};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,302.372873515376)(375,306.813858107389)(400,311.44710925522)(425,316.27262695887)(450,321.290411218339) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=triangle,
+mark options={solid}
+]
+coordinates{
+ (350,300.731791612366)(375,304.400035789263)(400,308.234309705416)(425,312.230675840376)(450,316.391725427145) 
+};
+
+\addlegendentry{U = 1.0 m/s};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,300.731563715715)(375,304.400678118378)(400,308.233750097977)(425,312.230779654512)(450,316.391766787983) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=o,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,312.655096897302)(375,321.626598673177)(400,330.745071084892)(425,339.984344731446)(450,349.372874694459) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,312.654545115612)(375,321.62926293606)(400,330.740388986381)(425,339.987923266577)(450,349.371865776646) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=asterisk,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,308.180764425938)(375,315.23777405621)(400,322.514900932077)(425,329.993676412072)(450,337.663085911781) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,308.17770961682)(375,315.244096647504)(400,322.514262012901)(425,329.988205713013)(450,337.66592774784) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=+,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,304.746385505233)(375,310.27841413592)(400,316.032804537682)(425,322.000126474253)(450,328.177257073985) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,304.745040089233)(375,310.281285178338)(400,316.032263906429)(425,321.997976273505)(450,328.178422279568) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=x,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,302.373409591706)(375,306.812631132462)(400,311.447573722019)(425,316.27323464473)(450,321.290029964275) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,302.372873515376)(375,306.813858107389)(400,311.44710925522)(425,316.27262695887)(450,321.290411218339) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=triangle,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,300.731791612366)(375,304.400035789263)(400,308.234309705416)(425,312.230675840376)(450,316.391725427145) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,300.731563715715)(375,304.400678118378)(400,308.233750097977)(425,312.230779654512)(450,316.391766787983) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=o,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,312.655096897302)(375,321.626598673177)(400,330.745071084892)(425,339.984344731446)(450,349.372874694459) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,312.654545115612)(375,321.62926293606)(400,330.740388986381)(425,339.987923266577)(450,349.371865776646) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=asterisk,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,308.180764425938)(375,315.23777405621)(400,322.514900932077)(425,329.993676412072)(450,337.663085911781) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,308.17770961682)(375,315.244096647504)(400,322.514262012901)(425,329.988205713013)(450,337.66592774784) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=+,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,304.746385505233)(375,310.27841413592)(400,316.032804537682)(425,322.000126474253)(450,328.177257073985) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,304.745040089233)(375,310.281285178338)(400,316.032263906429)(425,321.997976273505)(450,328.178422279568) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=x,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,302.373409591706)(375,306.812631132462)(400,311.447573722019)(425,316.27323464473)(450,321.290029964275) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,302.372873515376)(375,306.813858107389)(400,311.44710925522)(425,316.27262695887)(450,321.290411218339) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=triangle,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,300.731791612366)(375,304.400035789263)(400,308.234309705416)(425,312.230675840376)(450,316.391725427145) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,300.731563715715)(375,304.400678118378)(400,308.233750097977)(425,312.230779654512)(450,316.391766787983) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=o,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,312.655096897302)(375,321.626598673177)(400,330.745071084892)(425,339.984344731446)(450,349.372874694459) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,312.654545115612)(375,321.62926293606)(400,330.740388986381)(425,339.987923266577)(450,349.371865776646) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=asterisk,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,308.180764425938)(375,315.23777405621)(400,322.514900932077)(425,329.993676412072)(450,337.663085911781) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,308.17770961682)(375,315.244096647504)(400,322.514262012901)(425,329.988205713013)(450,337.66592774784) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=+,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,304.746385505233)(375,310.27841413592)(400,316.032804537682)(425,322.000126474253)(450,328.177257073985) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,304.745040089233)(375,310.281285178338)(400,316.032263906429)(425,321.997976273505)(450,328.178422279568) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=x,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,302.373409591706)(375,306.812631132462)(400,311.447573722019)(425,316.27323464473)(450,321.290029964275) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,302.372873515376)(375,306.813858107389)(400,311.44710925522)(425,316.27262695887)(450,321.290411218339) 
+};
+
+\addplot [
+color=black,
+only marks,
+mark=triangle,
+mark options={solid},
+forget plot
+]
+coordinates{
+ (350,300.731791612366)(375,304.400035789263)(400,308.234309705416)(425,312.230675840376)(450,316.391725427145) 
+};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+coordinates{
+ (350,300.731563715715)(375,304.400678118378)(400,308.233750097977)(425,312.230779654512)(450,316.391766787983) 
+};
+
+\end{axis}
+\end{tikzpicture}

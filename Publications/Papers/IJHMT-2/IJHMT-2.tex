@@ -1,0 +1,568 @@
+\documentclass[preprint,12pt]{elsarticle}
+\biboptions{sort&compress}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{tabls}
+\usepackage{multirow}
+\usepackage{cleveref}
+\usepackage{verbatim}
+
+\usepackage{pgfplots}
+\usetikzlibrary{plotmarks}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\newcommand*{\h}{\hspace{5pt}}% for indentation
+\newcommand*{\hh}{\h\h}% double indentation
+
+\usepackage{framed} % Framing content
+\usepackage{multicol} % Multiple columns environment
+\usepackage{nomencl} % Nomenclature package
+\RequirePackage{ifthen}
+\renewcommand{\nomgroup}[1]{%
+\ifthenelse{\equal{#1}{P}}{\item[\textbf{Superscripts}]}{
+\ifthenelse{\equal{#1}{G}}{\item[\textbf{Greek Symbols}]}{
+\ifthenelse{\equal{#1}{S}}{\item[\textbf{Subscripts}]}{}}}}
+
+\newcommand{\nomunit}[1]{%
+\renewcommand{\nomentryend}{\hspace*{\fill}#1}}
+\newcommand{\bv}[1]{\boldsymbol #1}  % change this to change how math vectors are handled
+
+%\usepackage{breqn}
+
+%\special{papersize=8.5in,11in}
+
+\journal{International Journal of Heat and Mass Transfer}
+
+
+\pdfinfo{%
+  /Title(Optimization of an Inverse Convection Solution Strategy)
+  /Author   (Yogesh Jaluria)
+    /Author   (Joseph R VanderVeer)
+  /Creator  (Joseph R VanderVeer)
+  /Subject  (Inverse Convection Problems)
+}
+
+\begin{document}
+
+\begin{frontmatter}
+\title{Optimization of an Inverse Convection Solution Strategy}
+
+\author{Joseph R VanderVeer}
+\author{Yogesh Jaluria\corref{cor}}
+\ead{jaluria@soemail.rutgers.edu}
+
+\address{Department of Mechanical and Aerospace Engineering: Rutgers University, 98 Brett Rd, Piscataway NJ, 08854}
+\cortext[cor]{Corresponding Author}
+
+
+
+\begin{abstract}
+An optimization procedure was applied to the search process of a previously developed predictor - corrector method for solving inverse convection heat transfer problems.  A genetic algorithm was utilized to minimize the area of acceptable error for the inverse methodology over the entire relevant domain.  The optimization resulted in a new search shape for the inverse methodology.  This substantially reduced the required sample size.  An important additional advantage of the optimization was the elimination of alternative local minimums.  The new and old sampling pattern were used to solve an inverse problem of a thermal plume in a crosswind.  The results were that the maximum error from the original search shape was $10\%$ while the new search shape reduced the error to under $1\%$ for the entire usable domain.  Also of importance is the significantly increased spatial range of the methodology down stream.  This approach could be extended to many applied areas such as environmental flows, room fires, and thermal management systems.
+
+
+%Investigation for minimalist solutions to the inverse convection problem of a plume in a crosswind has developed a predictor – corrector method.  The inverse problem is to predict the strength and location of the plume with respect to a select few downstream sampling points.  This is accomplished with the help of two numerical simulations of the domain at differing source strengths, allowing the generation of two inverse interpolation functions.  These functions in turn are utilized by the predictor step to acquire the plume strength.  Finally, the same interpolation functions with the corrections from the plume strength are used to solve for the plume location.  Through optimization of the relative location of the sampling points, the minimum number of samples for accurate predictions is reduced to two for the plume strength and three for the plume location.  After the optimization, the predictor-corrector method demonstrates global uniqueness of the inverse solution for all test cases.  The solution error is less than 1% for both plume strength and plume location.
+
+
+\end{abstract}
+\begin{keyword}
+Inverse Problems \sep Computational Heat Transfer \sep Convection
+\end{keyword}
+\end{frontmatter}
+
+\crefname{equation}{equation}{equations}
+\crefname{figure}{figure}{figures}
+\crefname{table}{table}{tables}
+
+\newlength\figureheight 
+\newlength\figurewidth 
+	
+	
+	
+	
+\makenomenclature
+\setlength{\nomitemsep}{-\parskip} % Baseline skip between items
+\renewcommand*\nompreamble{\begin{multicols}{2}}
+\renewcommand*\nompostamble{\end{multicols}}
+\nomenclature[A]{$T$}{temperature}
+\nomenclature[G]{$\bv{\Delta}$}{relative difference between the first sampled point and other sampled points}
+\nomenclature[A]{$\bv{r}$}{vector location of sampled points}
+\nomenclature[A]{$F$}{minimization function}
+\nomenclature[A]{$n$}{number of sample locations}
+\nomenclature[G]{$\bv{\delta}$}{vector distance between the actual sampled location and the current test location}
+\nomenclature[G]{$\varepsilon$}{error associated with the inverse convection method at a location with given sampled data}
+\nomenclature[A]{$d$}{number of simulations}
+\nomenclature[A]{$a$}{number of sample locations used in the predictor stage}
+\nomenclature[A]{$U$}{free stream velocity}
+\nomenclature[A]{$x,y$}{coordinates}
+\nomenclature[G]{$\phi$}{normalized temperature $\phi = \frac{T-T_{\infty}}{T_S-T_{\infty}}$}
+\nomenclature[A]{$X,Y$}{normalized coordinates}
+\nomenclature[S]{$i, j,k$}{index}
+\nomenclature[S]{$A,B$}{data set A,B}
+\nomenclature[S]{$P$}{predicted}
+\nomenclature[S]{$mod$}{modified}
+\nomenclature[S]{$\infty$}{free stream}
+\nomenclature[P]{$\ast$}{predictor stage, alternative heat flux eqn.}
+\nomenclature[S]{$S$}{source}
+\nomenclature[A]{$b,m$}{model parameters}
+\nomenclature[S]{$0,1,2$}{sample point indexes}
+\nomenclature[S]{$O$}{optimized}
+\nomenclature[G]{$\rho$}{density}
+\nomenclature[A]{$t$}{time}
+\nomenclature[A]{$P$}{pressure}
+\nomenclature[A]{$E$}{thermal energy}
+\nomenclature[G]{$\mu_{t}$}{eddy viscosity}
+\nomenclature[A]{$P_{rt}$}{turbulent Prandtl number}
+\nomenclature[A]{$k,\epsilon$}{turbulence kinetic energy, dissipation rate}
+\nomenclature[A]{$C_1,C_2,C_{1\epsilon},C_{\mu},\sigma_k,\sigma_{\epsilon}$}{$k-\epsilon$ model coefficients}
+\nomenclature[A]{$l, I$}{turbulence length scale and intensity}
+\nomenclature[G]{$\lambda$}{thermal conductivity}
+\nomenclature[G]{$\mu$}{dynamic viscosity}
+
+%\nomenclature[A]{ }{ }
+
+\begin{table*}[!t]
+  \begin{framed}
+    \printnomenclature
+  \end{framed}
+\end{table*}
+
+
+
+
+\section{Introduction}
+
+Thermal-fluid systems often have limited physical access to sensors and/or limited information.  These situations are often inverse heat transfer problems and thus inverse problems are of great importance.  These problems differ from normal/forward problems, by having limited or no a priori knowledge of the boundary conditions.  These problems must rely on limited knowledge of the domain to solve for the unknown boundary conditions.
+
+For example, the optical fiber drawing furnace wall temperature cannot be directly measured due to the shape of the furnace, inaccessibility, and high temperatures.  For this case, an instrumented rod is used to determine the temperature at the centerline from which the wall temperature of the furnace is to be obtained.  This results in an inverse heat transfer problem, solved through a regularization technique developed by \citet{issa}.
+
+An example of knowing limited information of the boundary condition and determining the rest of the boundary conditions would be determining the location of a fire in a room from outside the room.  This would be accomplished using thermal sensors located on the door along with knowledge of the shape of the room to solve the inverse convection problem.
+
+Newer methods for solving inverse heat transfer problems are constantly being developed and improved upon.  Inverse conduction and radiation problems have been the focus of much of the previous research, as displayed by the several books agglomerating the subject (e.g. \cite{orlande,ozisik}).  Relatively recently, the inverse convection problem has been gaining in popularity because of its considerable practical importance.  For example \citet{inversecgm} solved inverse free convection problems with time varying heat fluxes with a single sensor.  They determined that as the Rayleigh number increases, the sensor needs to be placed progressively closer to the active boundary layer.  Another example is the paper by \citet{liu}, in which they use inverse convection methods to determine thermal profiles in a slot vented enclosure.  They use an iterative approach requiring 20 to 30 iterations to achieve less than $1\%$ error.
+
+One last example of the inverse convection problem occurs with unknown jet conditions for a jet in a cross-wind.  \Citet{knight}, in conjunction with \citet{rossmann}, used a combination experimental-numerical model with a response surface to reasonably predict the jet temperature and velocity within the domain.  They were able to predict the source temperature within $9\%$, but the second stage of the mechanism significantly over predicted the source temperature.  The jet velocity was predicted within the experimental error.
+
+The present study is an attempt to increase the overall accuracy and effectiveness of a methodology used to solve inverse convection problems as, originally proposed by \citet{cht12} and fully implemented in a subsequent paper \cite{ijhmt1}.  This methodology uses an effective spatial pattern to search the domain for a statistical match.  The spatial pattern is identified by the relative location of the sampling points and is labeled the search shape.  The minimization of error between the selected data points results in the solution to the inverse heat transfer problem.  This method was demonstrated to be effective for numerous cases.  However, the search shape was based upon intuition only and had no bearing upon the underlying problem.  The goal of this work is to extend the method described earlier by optimizing the shape of the search pattern while extending its capabilities and accuracy.
+
+\section{Inverse Solution Methodology}
+
+For completeness, the methodology described by \citet{ijhmt1} will be briefly described here.  The method was developed to solve an inverse convection problem consisting of a plume in a crosswind.  The goal was to determine the plume strength and location within the domain.  The crosswind was created via a small wind tunnel with test section dimensions of $54.5 \times 305 \times 254 \, mm$.  A diagram of the experimental and computational domain is shown in \cref{fig:diagram}.  All of the dimensions are in millimeters.
+%
+\begin{figure*}[!tbp]
+\begin{center}
+\includegraphics[scale=.35]{WindTunnel.jpg}
+\caption{Schematic of the wind tunnel and the computational domain \cite{cht12}}
+\label{fig:diagram}
+\end{center}
+\end{figure*}
+
+The variations in density, thermal buoyancy, and thermal radiation may be neglected in the energy equation over the range considered.  Then, the relation between the local temperature and the source (plume) temperature is a linear function.  \Cref{eq:linear} is the linear function with $T_S$ refering to the source temperature and $T\left( \bv r \right)$ referring to the local temperature.  Also, $\bv r$ is a simple $x$, $y$ vector as shown in \cref{eq:vector} and $\bv \Delta$ is related to $\bv r$ by the relation in \cref{eq:delta}.  The quantities $m$ and $b$ are defined in the subsequent \cref{eq:m,eq:b}, where the subscripts $A$ and $B$ denote different simulation conditions \cite{ijhmt1}.
+\begin{subequations}
+\label{eq:linearset}
+\begin{align}
+T_S &= m\left(  \bv r  \right) T\left( \bv r \right) + b\left( \bv r \right) \label{eq:linear} \\
+\bv r &= r\left( x, y\right) \label{eq:vector}\\
+\bv{r_i} & = \bv{r_0} + \bv{\Delta_i} \label{eq:delta}\\
+m\left( \bv r \right) &= \frac{T_{SA} - T_{SB}}{T_A \left( \bv r \right) - T_B\left( \bv r \right)} \label{eq:m} \\
+b\left( \bv r \right) &= T_{SA} - m\left( \bv r \right) T_A \left( \bv r \right) \label{eq:b}
+\end{align}
+\end{subequations}
+
+The simulations were performed using Ansys Fluent version 13 \cite{fluentsoftware}.  The Navier-Stokes equations were solved using a three-dimensional, steady state, realizable, $k-\epsilon$ model with enhanced wall effects \cite{ijhmt1}.  The fluid was modeled as an ideal gas at constant atmospheric pressure and specific heat at constant pressure was modeled as a constant at $C_P = 1006.43\, J/(kg-K)$.  Dynamic viscosity and thermal conductivity were both modeled using the Chapman-Enscog equations \cite{ijhmt1}.  
+
+A turbulence model is required, while the Reynolds number is only of order 2000 the Richardson number is near 5 and thus the buoyancy introduces turbulence into the flow.  The governing equations are \cref{eq:veldecomp,eq:mass,eq:momentum,eq:energy,eq:k,eq:e,eq:reynoldsstress}, they are in order: velocity decomposition, mass, momentum, energy, turbulent kinetic energy, turbulence dissipation rate, and Reynolds stress.
+
+\begin{equation}
+\centering
+u_i = \overline{u_i} + u^{'}_{i}
+\label{eq:veldecomp}
+\end{equation}
+
+\begin{equation}
+\frac{\partial \rho }{\partial t } + \frac{\partial }{\partial x_i} \left( \rho u_i \right) = 0 
+\label{eq:mass}
+\end{equation}
+
+\begin{equation}
+\centering
+\begin{split}
+\frac{\partial }{\partial t} \left( \rho u_i \right) &+ \frac{\partial }{\partial x_j } \left( \rho u_i u_j \right) = \\
+ &\frac{\partial P}{\partial x_i } + \frac{\partial }{\partial x_j } \left[ \mu \left( 2 S_{ij} - \frac{2}{3} \delta_{ij} \frac{\partial u_k }{\partial x_k } \right) - \rho \overline{u^{'}_{i} u^{'}_{j}} \right] 
+\label{eq:momentum}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\centering
+\begin{split}
+\frac{\partial }{\partial t } \left( \rho E \right) &+ \frac{\partial }{\partial x_i} \left[ u_i \left( \rho E + P \right) \right] = \\
+ &\frac{\partial }{\partial x_i } \left[ \left( \lambda + \frac{C_p \mu_t }{P_{rt}} \right) \frac{\partial T}{\partial x_i} \right] 
+\label{eq:energy}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\centering
+\begin{split}
+\frac{\partial }{\partial t} \left(\rho k \right) &+ \frac{\partial }{\partial x_j} \left( \rho k u_j \right) = \\
+&\frac{\partial }{\partial x_j} \left[ \left( \mu + \frac{\mu_t}{\sigma_k} \right) \frac{\partial k}{\partial x_j} \right] + \frac{\partial u_j}{\partial x_i} \left( -\rho \overline{u^{'}_{i} u^{'}_{j}} \right) \\
+&- g_i \frac{\mu_t}{\rho P_{rt}} \frac{\partial \rho }{\partial x_i} + \rho \epsilon
+\label{eq:k}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\centering
+\begin{split}
+ \frac{\partial }{\partial t} \left(\rho \epsilon \right) &+ \frac{\partial }{\partial x_j} \left( \rho \epsilon u_j \right) = \\
+ &\frac{\partial }{\partial x_j } \left[ \left( \mu + \frac{\mu_t }{\sigma_\epsilon } \right) \frac{\partial \epsilon }{\partial x_j } \right] + \rho C_1 S \epsilon - \rho C_2 \frac{\epsilon^2 }{k+\sqrt{\nu \epsilon}} \\
+ &- C_{1 \epsilon} \frac{\epsilon}{k} C_{3\epsilon} g_i \frac{\mu_t}{\rho P_{rt}} \frac{\partial \rho}{\partial x_i}
+\label{eq:e}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\centering
+- \rho \overline{u^{'}_{i} u^{'}_{j}} = 2\mu_t S_{ij} - \frac{2}{3} \delta_{ij} \left( \rho k + \mu_t \frac{\partial u_k}{\partial x_k} \right)
+\label{eq:reynoldsstress}
+\end{equation}
+
+The constants for the turbulence model are \cite{realizable,fluent} : 
+\begin{equation}
+\label{eq:constants}
+C_{1\epsilon} = 1.44 , C_2 = 1.9 , \sigma_k = 1.0 , \sigma_\epsilon = 1.2 , P_{rt} = 0.85 
+\end{equation}
+\begin{equation}
+C_1 = max\left[0.43,\frac{Sk/\epsilon}{Sk/\epsilon +5} \right] , S = \sqrt{2S_{ij}S_{ji}} , C_{3\epsilon} = tanh\left(\frac{u_g}{u_p}\right)
+\end{equation}
+\begin{subequations}
+\begin{align}
+\mu_t &= \frac{\rho C_{\mu} k^2}{\epsilon} \\
+C_{\mu} &= \frac{1}{A_0 + \frac{A_1 k U^*}{\epsilon}} \\
+U^* &\equiv \sqrt{S_{ij} S_{ji} + \Omega_{ij} \Omega_{ji}} \\
+A_0 &= 4.04 \\
+A_1 &= \sqrt{6} cos \left[\frac{1}{3} cos^{-1}\left(\sqrt{6} \frac{S_{ij}S_{jk}S_{ki}}{\left(S_{ij} S_{ji} \right)^{\frac{3}{2}}} \right) \right] \\
+S_{ij} &= \frac{1}{2} \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i} \right) \\
+\Omega_{ij} &= \frac{1}{2} \left( \frac{\partial u_i}{\partial x_j} - \frac{\partial u_j}{\partial x_i} \right)
+\end{align}
+\end{subequations}
+Where the $u_g$ and $u_p$ are the velocity component parallel and perpendicular to gravity respectively.
+
+The simulations were validated against experimental results and two such comparisons are shown in \cref{fig:simVSexpX40,fig:simVSexpX70}.  The locations of the plots are normalized and the normalization method is shown in \cref{eq:normalize} where L is the width of the plume.
+
+\begin{figure}[!htbp]
+	\centering
+  \setlength\figureheight{6cm} 
+	\setlength\figurewidth{6cm}
+	\input{simVSexpX40mm.tikz}
+	\caption{Validation of the simulation: Experiment versus simulation at $X=1.6$ \cite{ijhmt1}}
+	\label{fig:simVSexpX40}
+\end{figure}
+\begin{figure}[!htbp]
+	\centering
+	\setlength\figureheight{6cm} 
+	\setlength\figurewidth{6cm}
+	\input{simVSexpX70mm.tikz}
+	\caption{Validation of the simulation: Experiment versus simulation at $X=2.25$\cite{ijhmt1}}
+	\label{fig:simVSexpX70}
+\end{figure}
+
+\begin{subequations}
+\label{eq:normalize}
+\begin{align}
+\phi &= \frac{T-T_{\infty}}{T_S-T_{\infty}} \\
+X &= \frac{x}{L} \\
+Y &= \frac{y}{L} 
+\end{align}
+\end{subequations}
+
+
+The inverse solution begins with the acquisition of $n$ samples from within the domain, where $n$ may be as few as 3.  The relative location between the samples must be known, that is $\bv{\Delta_i}$ must be known for all samples.  The simulation data is used to construct inverse interpolation functions $m$ and $b$.  Only two simulations are required due to the linear nature of \cref{eq:linear}.  $F$ is the objective function for the predictor stage of the methodology.  The minimization of $F$ is performed utilizing only a subset $a$ samples of the original $n$ samples.  The value of $a$ is chosen to be $\frac{1}{2}n$. While this may not be optimum for larger values of $n$, for small values of $n$ it ensures both predictor and corrector steps have data to work with.  The vector $\bv{r^{\ast}_{SP}}$ is the solution to the minimum of $F$.  If such a solution can be found, then \cref{eq:Tsp} may be used to calculate the strength of the source plume \cite{ijhmt1} .
+%
+\begin{equation}
+\centering
+F\left( \bv r \right) =  \sum^{a}_{i=1} [ m\left( \bv r + \bv{\Delta_i}  \right) T\left( \bv{r_i} \right) +b\left( \bv r + \bv{\Delta_i} \right) -m\left( \bv r \right) T\left( \bv{r_0} \right) - b\left( \bv r \right) ]^2  
+\label{eq:F}
+\end{equation}
+%
+\begin{equation}
+\centering
+T^{\ast}_{SP} = \frac{1}{a} \{ \sum^{a}_{i=0} [ m\left( \bv{r^{\ast}_{SP}}+ \bv{\Delta_i}  \right) T\left( \bv{r_i} \right)  + b\left( \bv{r^{\ast}_{SP}}+ \bv{\Delta_i} \right) ] \}
+\label{eq:Tsp}
+\end{equation}
+
+The corrector phase of the method begins with correcting \cref{eq:F} for the now predicted source strength, which creates \cref{eq:Fmod}.  Minimizing \cref{eq:Fmod} by utilizing the rest of sampling points results in the source location $\bv{r_{SP}}$.  A sample point $\bv{r_0}$ must be reused for \cref{eq:delta} to still be valid, otherwise the $\bv{r_0}$ solved for will change its definition during the solution method.  The corrected source strength can then be calculated using \cref{eq:T}.  A flowchart of the methodology is found in \cref{fig:flowchart} \cite{ijhmt1}.  A typical inverse calculation requires approximately 5 minutes on a single thread of a 3.2Ghz processor.  If the minimization method selected may be multi-threaded, the time will reduce dramatically as the bulk of the process time is the minimization required.
+%
+\begin{equation}
+\centering
+F_{mod}\left( \bv r \right) = \sum^{n-a}_{i=0} [ m\left( \bv r +\bv{\Delta_i} \right) T\left( \bv{r_i} \right) + b\left( \bv r + \bv{\Delta_i} \right)-T^{\ast}_{SP} ]^2
+\label{eq:Fmod}
+\end{equation}
+%
+\begin{equation}
+\centering
+T_{SP} = \frac{1}{n-a} \{ \sum^{n-a}_{i=0} [ m\left( \bv{r_{SP}}+ \bv{\Delta_i} \right) T\left( \bv{r_i}\right)  + b\left( \bv{r_{SP}}+ \bv{\Delta_i}  \right) ] \}
+\label{eq:T}
+\end{equation}
+
+\begin{figure}[!tbp]
+\centering
+\input{flowchart}
+\caption{Flow chart of the predictor - corrector methodology \cite{ijhmt1} }
+\label{fig:flowchart}
+\end{figure}
+
+
+
+
+\section{Methodology}
+  
+The optimization of the predictor - corrector method begins with identifying the function needing to be optimized.  The function desired needs to minimize the error associated with the prediction of the source temperature, since the predictor step defines the effectiveness of the corrector step.  Thus, we start with \cref{eq:Tsp} and determine the error of this function.  \Cref{eq:Tsp} is rewritten here with a few modifications.  The first aspect to identify is the change from $ \bv{r^{\ast}_{SP}}$ to $\bv{r_0}$, indicating that $\bv{r_0}$ is fixed prior to the optimization.  The $\bv{\Delta}$ is now included in the local temperature function to keep the relative distance during the optimization process.  Lastly is the addition of $\bv{\delta}$,  that is used to calculate the error for the entire domain by varying the location of the sampled points.
+%
+\begin{equation}
+\centering
+T_{SO} = \frac{1}{n} \{ \sum^{n}_{i=0} [ m\left(\bv{r_0} + \bv{\Delta_i} + \bv{\delta} \right) T\left(\bv{r_0} + \bv{\Delta_i}\right)  + b\left(\bv{r_0} + \bv{\Delta_i} + \bv{\delta}\right) ] \}
+\label{eq:Tsp2}
+\end{equation}
+%
+The error of \cref{eq:Tsp2} is written via \cref{eq:optfunct1} where $\varepsilon$ is the percent error.
+%
+\begin{equation}
+\centering
+\left| \frac{T_{SO} - T_S}{T_S-T_{\infty}}\right| \times 100 = \varepsilon 
+\label{eq:optfunct1}
+\end{equation}
+%
+The effectiveness of any one sampled data point is determined by how much it reduces the error at the test location and how much it increases the error everywhere else.  This is accomplished with the area defined by \cref{eq:optfunct1} at a specified error $\varepsilon$.
+
+The method used minimizes the area enclosed by \cref{eq:optfunct1} at a defined $\varepsilon$ using one variable sample point.  That is to say that the initial point is selected as $\bv{r_0}$, which through the optimization yields, $\bv{r_1}$.  Repeating this process, using $\bv{r_0}$ and $\bv{r_1}$, the optimization process can find $\bv{r_2}$.  If more accurate results are desired, this process may be continued indefinitely.  For this particular inverse problem of the plume in a crosswind, three total sampling points were enough to achieve the desired accuracy, i.e. better than the experimental temperature error of $2\%$.  This process is repeated for many iterations varying $U_\infty$, $T_S$, and $\bv{r_0}$ to cover the domain.  
+
+While any global optimization method would likely work the genetic algorithm was chosen due to its robustness and ease of use.  A canned genetic algorithm within the Mathworks Matlab\cite{matlabsoftware} optimization toolkit was utilized.  The genetic algorithm is a bio-mimetic optimization strategy specifically designed to be robust and solve for global minimums \cite{onwubiko}.  The genetic algorithm roughly mimics the evolution of a species with the design parameters called chromosomes.  The process starts by generating a large pool of chromosomes, each is checked against function needing to be optimized and ranked.  A selection process then chooses pairs of parents to generate the next generation.  Information from each of the chromosomes is used to make children chromosomes in what is known as crossover.  These new chromosomes have a small chance at mutation, which randomly changes a design parameter.  This reduces the chances of stagnation of the chromosome pool.  This process repeats until a stopping criteria is met, usually the total number of iterations or a count of iterations where the best performing chromosome does not change.  In the case of the Matlab version those default numbers are 100 and 50 respectively.
+
+The only parameters changed from the Matlab defaults are listed in \cref{tab:gaparam}.  Due to the repetitive nature and large total iteration count of the methodology, the population size of the genetic algorithm was kept small to reduce computation time.  While this could reduce the effectiveness of the genetic algorithm the large sample size reduces the effects.  Several test cases were performed with much larger populations and generation counts and found that the resultant solution was very similar to the reduced population version.  The computation time was approximately 2 weeks and run on a twin processor, twelve core computer at 3.2GHz with 32GB of RAM.
+A flow chart of the methodology is shown in \cref{fig:optflowchart}.
+%
+\begin{table}[!h!t!b!p]
+\begin{center}
+\begin{tabular}{ l c}
+\hline
+Parameter & Value \\ \hline
+PopulationSize & 60 \\
+Generations & 200 \\ \hline
+ \end{tabular}
+ \end{center}
+\caption{Genetic algorithm parameters}
+\label{tab:gaparam}
+\end{table}
+%
+%
+\begin{figure}[!tbp]
+\centering
+\input{optflowchart}
+\caption{Flow chart of the presented methodology}
+\label{fig:optflowchart}
+\end{figure}
+
+
+\section{Results and discussions}
+
+The methodology requires a large sampling of the domain of interest to function properly.  The selected parameters are varied as shown in \cref{tab:optparam}.  These parameters were selected to thoroughly cover the experimental domain, which has physical limitations.  The material properties of the wind tunnel limit $T_S$ to $450\, K$.  Which in turn limits $U_{\infty}$ to approximately $1.0, m/s$ due to the plume being pushed too close to the lower boundary and becoming difficult to measure accurately.  The parameter $r_{axial}$ is the coordinate in the direction of the free stream, and $r_{perp}$ is the coordinate perpendicular to the free stream.  The ranges for both $r_{axial}$ and $r_{perp}$ were selected to completely cover the effective range of the plume.  The end result of using these selected parameters is 1050 total samples in the domain.
+\begin{table}[!h!t!b!p]
+\begin{center}
+\begin{tabular}{ r c c c }
+\hline
+ Parameter & Minimum & Maximum & Increments \\ \hline 
+$U_\infty \, (m/s)$ & 0.0 & 1.0 & 0.2 \\
+$T_S \, (K)$ & 350 & 450 & 25 \\
+$r_{axial}$ $(mm)$ & 0 & 150 & 25 \\
+$r_{perp}$ $(mm)$ & 0 & 10 & 2.5 \\ \hline
+ \end{tabular}
+\caption{Variable domain parameters used for optimization}
+\label{tab:optparam}
+\end{center}
+\end{table}
+
+The results of this optimization is a ``perfect'' search shape for each of the aforementioned domain parameters.  However, the point of the inverse problem is such that the domain parameter is not known and determining the domain parameters are in fact the desired result of the inverse methodology.  Therefore to make the optimization worthwhile all of the $\bv{r_1}$'s are averaged together and similarly for $\bv{r_2}$.
+
+The result from averaging the 1050 domain optimization is shown in \cref{tab:optresults}.  While the methodology is capable of providing more sample points, the accuracy provided by the three sample points was more than enough to accurately solve the described inverse problem.  The predictor step uses the first and second samples, while the corrector step uses the first and third samples.  That is to say $\bv{r_0}$ is reused as previously described.
+\begin{table}[!h!t!b!p]
+\begin{center}
+\begin{tabular}{ c c }
+\hline
+ Sample Point & $\bv{\Delta} \, (mm)$  \\ \hline 
+0 & (0.0, 0.0) \\
+1 & (1.7, 3.5) \\
+2 & (2.8, 0.6) \\  \hline
+ \end{tabular}
+\caption{Search shape results of averaging over the domain}
+\label{tab:optresults}
+\end{center}
+\end{table}
+
+For comparisons sake, \cref{tab:original} contains the original search shape used in the inverse solution.  This search shape was selected based upon intuition only.  The original samples one through three were used for the predictor stage and one, four, and five were used in the corrector stage.
+%
+\begin{table}[!h!t!b!p]
+\begin{center}
+\begin{tabular}{ c c }
+\hline
+ Sample Point & $\bv{\Delta} \, (mm)$  \\ \hline 
+1 & (0.0, 0.0) \\
+2 & (1.0, 0.0) \\
+3 & (2.0, 0.0) \\
+4 & (0.0, 1.0) \\
+5 & (0.0, 2.0) \\ \hline
+ \end{tabular}
+\caption{Original search shape for this inverse solution}
+\label{tab:original}
+\end{center}
+\end{table}
+
+The error plots of \cref{fig:ERO1PT,fig:ERO2PT,fig:ERO3PT,fig:ERN2PT,fig:ERN3PT} demonstrate the effectiveness of the new sampling points.  These plots are explained as the predicted source temperature error if an incorrect location was predicted.  The correct result location is at $\bv{r_0} = (100.0,\,2.0)\,mm$ and is indicated by an `x'.  The shaded regions indicate how much error is associated with the prediction stage as it searches for a match within the domain.  That is to say it is a plot of $\varepsilon$ from \cref{eq:optfunct1}.  The $x$ and $y$ distances are normalized to the heater width of $25.4\,mm$.  The size and scale of each plot is kept the same for comparison's sake.  The largest contour region is empty space and indicates an error of $20\%$ or more.
+
+\Cref{fig:ERO1PT} is an error plot for 1 sample point.  This is the same for both the original sampled data and the optimized sampled data.  The darkest shaded regions indicate a $5\%$ or less error in source temperature for those locations, indicating that any of those regions are viable answers.  The biggest issue is that there are many local minimums, which will never converge to the correct solution.  \Cref{fig:ERN2PT,fig:ERO2PT} and \cref{fig:ERN3PT,fig:ERO3PT} show the differences between the original sampled data pattern and the optimized sampled data pattern.  In both cases the error from the optimized sampled data is smaller and more confined than the original sampled data.  
+%
+\begin{figure}[!htbp]
+	\centering
+	\setlength\figureheight{4cm} 
+	\setlength\figurewidth{4cm}
+	\input{EffectiveRangeOPTIMIZED1Pt.tikz}
+	\caption{Contours of source prediction error, utilizing 1 point of information indicated by the `x'}
+	\label{fig:ERO1PT}
+\end{figure}
+\begin{figure}[!htbp]
+	\centering
+	\setlength\figureheight{4cm} 
+	\setlength\figurewidth{4cm}
+	\input{EffectiveRangeNoOPT2Pt.tikz}
+	\caption{Contours of source prediction error, utilizing 2 points of sampled data from the original search shape}
+	\label{fig:ERN2PT}
+\end{figure}
+\begin{figure}[!htbp]
+	\centering
+	\setlength\figureheight{4cm} 
+	\setlength\figurewidth{4cm}
+	\input{EffectiveRangeOPTIMIZED2Pt.tikz}
+	\caption{Contours of source prediction error, utilizing 2 points of sampled data from the optimized search shape}
+	\label{fig:ERO2PT}
+\end{figure}
+\begin{figure}[!htbp]
+	\centering
+	\setlength\figureheight{4cm} 
+	\setlength\figurewidth{4cm}
+	\input{EffectiveRangeOPTIMIZED3Pt.tikz}
+	\caption{Contours of source prediction error, utilizing 3 points of sampled data from the optimized search shape}
+	\label{fig:ERO3PT}
+\end{figure}
+\begin{figure}[!htbp]
+	\centering
+	\setlength\figureheight{4cm} 
+	\setlength\figurewidth{4cm}
+	\input{EffectiveRangeNoOPT3Pt.tikz}
+	\caption{Contours of source prediction error, utilizing 3 points of sampled data from the original search shape}
+	\label{fig:ERN3PT}
+\end{figure}
+
+The area enclosed by the $5\%$ error line is presented in \cref{tab:area}.  This quickly shows the effectiveness of the optimized search shape.  The optimized search shape is more accurate with two sample points than the original search shape was with three sample points.  Only at five sample points does the original sample set surpass the effectiveness of the optimized version.  This, however, does not tell the whole story, as the lack of alternative local minimums in the optimized data are of much more importance.  This allows the use of quicker and more efficient optimization techniques in the inverse methodology, while guaranteeing the solution does not converge to an alternative local minimum.  This shows how effective the optimization for the search shape is, while highlighting the affects of not doing so.  Unfortunately, this means for every experimental configuration a optimized search shape needs to be developed for maximum effectiveness of the inverse algorithm.
+%
+\begin{table}[!h!t!b!p]
+\begin{center}
+\begin{tabular}{ c c c }
+\hline
+ Sample Point & Original Search Shape & Optimized Search Shape  \\ \hline 
+1 & 2375 & 2375 \\
+2 & 1142 & 60 \\
+3 & 71 & 30 \\
+4 & 39 & -   \\
+5 & 13 & -   \\ \hline
+ \end{tabular}
+\caption{Comparison of enclosed area for $5\%$ error $(0.01\,mm^2)$}
+\label{tab:area}
+\end{center}
+\end{table}
+
+The previously presented original and optimized sampled data set comparison had the following test conditions, \cref{tab:sampleset}.
+%
+\begin{table}[!h!t!b!p]
+\begin{center}
+\begin{tabular}{ l c}
+\hline
+Parameter & Value \\ \hline
+$T_{\infty}\, (K)$ & $293$ \\
+$P_{\infty}\, (kPa)$ & $101.32$ \\
+$T_{S}\, (K)$ & $425$ \\
+$U_{\infty} \, (m/s)$ & $0.6$ \\ \hline
+ \end{tabular}
+ \end{center}
+\caption{Test parameters for the sampled set comparison}
+\label{tab:sampleset}
+\end{table}
+
+Lastly let us make a comparison of the results from the inverse methodology shown in \cref{tab:results}.  The parameters are labeled on the left.  The original search shape solutions are in the middle under ``original''.  The optimized search shape solutions are on the right under ``optimized''.  Under the parameters heading $U_{\infty}$ is the free stream velocity, while $T_S$ is the source temperature (not known a priori) for that case.  Also under the parameters heading is $\bv{r}_0$, this is the location of the datum point (not known a priori).  Under the heading original $T_S$ is the \% error the original search shape had for predicting the source temperature.  The next column $\bv{r}_0$ is the \% error for predicting the location of the plume source used the original search shape.  The last two columns are \% error associated for predicting the source temperature and source location using the optimized search shape.  The data presented here is a small subset of the complete data, but contains a good representation of the complete data.
+%
+\begin{table}[!h!t!b!p]
+\begin{center}
+\begin{tabular}{ l | l | l }
+\hline
+Parameters & Original & Optimized \\ \hline 
+\begin{tabular}{ c c c }
+$U_{\infty}\, (m/s)$ & $T_S\, (K)$ & $\bv{r_0}\,(mm)$ \\ \hline
+$0.4$ & $375$ & $(100.0,\, 1.0)$ \\ \hline
+$0.6$ & $375$ & $(100.0,\, 1.0)$ \\ \hline
+$0.6$ & $400$ & $(100.0,\, 1.0)$ \\ \hline
+$0.6$ & $425$ & $(100.0,\, 1.0)$ \\ \hline
+$0.6$ & $425$ & $(140.0,\, 8.0)$ \\ \hline
+$0.6$ & $425$ & $(140.0,\, 2.0)$ \\ \hline
+$0.8$ & $425$ & $(140.0,\, 8.0)$ \\ 
+\end{tabular} &
+\begin{tabular}{ c c }
+$T_S$ & $\bv{r_0}$ \\ \hline
+$0.12$ & $(0.2,\, 0.0)$  \\ \hline
+$0.36$ & $(0.3,\, 10.0)$  \\ \hline
+$0.84$ & $(0.3,\, 0.0)$  \\ \hline
+$0.61$ & $(0.1,\, 10.0)$  \\ \hline
+$0.68$ & $(3.4,\, 0.0)$  \\ \hline
+$0.68$ & $(1.9,\, 0.0)$  \\ \hline
+$0.61$ & $(1.9,\, 1.3)$  \\ 
+\end{tabular} &
+\begin{tabular}{ c c }
+$T_S$ & $\bv{r_0}$ \\ \hline
+0.12 & $(0.1,\, 0.0)$  \\ \hline
+0.12 & $(0.1,\, 0.0)$  \\ \hline
+0.09 & $(0.1,\, 0.0)$  \\ \hline
+0.07 & $(0.1,\, 0.0)$  \\ \hline
+0.53 & $(0.0,\, 0.0)$  \\ \hline
+0.15 & $(0.0,\, 0.0)$  \\ \hline
+0.53 & $(0.0,\, 0.0)$  \\ 
+\end{tabular} \\ \hline
+ \end{tabular}
+\caption{Results of the inverse methodology ($\%$ error)}
+\label{tab:results}
+\end{center}
+\end{table}
+%
+Percent error is calculated using the following \cref{eq:error}.
+\begin{subequations}
+\begin{align}
+error_{temp} (\%) &= \frac{\left|T_{SP}-T_S\right| }{T_S-T_{\infty}} \times 100 \\
+error_{\bv{r}} (\%) &= \frac{\left|\bv{r_{SP}}-\bv{r_S}\right|}{\bv{r_S}} \times 100 \\
+\end{align}
+\label{eq:error}
+\end{subequations}
+
+\section{Conclusions}
+A predictor - corrector method for solving inverse convection problems was optimized and analyzed against numerical results.  The inverse method was previously developed and the search shape was originally based upon physical intuition \cite{ijhmt1,cht12}.  A new search shape was selected based upon optimization results.  The new search shape reduces the number of required sampling points from five to three while eliminating the alternative local minimums.  The elimination of false minimums also has the effect of significantly reducing the run time of the inverse methodology by allowing for more efficient optimization techniques.  The new data points decreases the error in location prediction from a maximum of $10\%$ \cite{ijhmt1} down to less than $1\%$.  
+
+While the predictor - corrector method was furthered by this study, the methodology can still be advanced.  One of the potential paths to continue is a full error analysis of the domains, developing  an envelope of acceptable error.  That is to say, determine the range of parameters in which the method will result in a certain acceptable error.  Another option would be to extend the methodology to similar inverse convection problems such as the jet in a crosswind or a plume in an enclosure.
+
+The optimize search shape highlights the requirements of needing a new optimization search shape for each experimental configuration to get the maximum performance of the inverse algorithm.  Another potential problem with the algorithm is it does not easily lend itself to transient conditions and thus requires steady state situations only.  This comes with an upside as it is able to solve for many boundary conditions simultaneously.
+
+Fundamentally this predictor - corrector method is very sound, however it needs to be matured to a full three dimensional system with the possibility of transient solutions as well.  If these features could be developed, the method would have much more far reaching applications such as fires in urban environments \cite{hu,blanchard}.
+
+\appendix
+
+\bibliography{Bibliography}{}
+\bibliographystyle{model1-num-names}
+\end{document}
+

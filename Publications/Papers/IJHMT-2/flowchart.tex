@@ -1,0 +1,40 @@
+  % setting the typeface to sans serif and the font size to small
+  % the scope local to the environment
+  \sffamily
+  \footnotesize
+  \begin{tikzpicture}[auto,
+    %decision/.style={diamond, draw=black, thick, fill=white,
+    %text width=8em, text badly centered,
+    %inner sep=1pt, font=\sffamily\small},
+    block_center/.style ={rectangle, draw=black, thick, fill=white,
+      text width=24em, text centered,
+      minimum height=4em},
+    block_left/.style ={rectangle, draw=black, thick, fill=white,
+      text width=16em, text ragged, minimum height=4em, inner sep=6pt},
+    block_noborder/.style ={rectangle, draw=none, thick, fill=none,
+      text width=18em, text centered, minimum height=1em},
+    block_assign/.style ={rectangle, draw=black, thick, fill=white,
+      text width=18em, text ragged, minimum height=3em, inner sep=6pt},
+    block_lost/.style ={rectangle, draw=black, thick, fill=white,
+      text width=16em, text ragged, minimum height=3em, inner sep=6pt},
+      line/.style ={draw, thick, -latex', shorten >=0pt}]
+    % outlining the flowchart using the PGF/TikZ matrix funtion
+    \matrix [column sep=5mm,row sep=3mm] {
+			\node [block_center] (acquire) {Acquire n samples of unknown source strength and location};\\
+		  \node [block_center] (sim) {Simulate d test domains spanning thermal region of interest};	\\		
+			\node [block_center] (calcm) {Calculate $m( \bv r)$ and $b( \bv r)$};	\\		
+			\node [block_center] (minf) {Find minimization of $F( \bv r)$ where $\left. F( \bv r) \right|_{min} = F(\bv{r^{\ast}_{SP}})$ using a acquired samples};	\\					
+			\node [block_center] (calcts) {Calculate $T^{\ast}_{SP}$};	\\		
+			\node [block_center] (minfmod) {Find minimization of $F_{mod}(\bv r)$ where $\left. F_{mod}( \bv r) \right|_{min} = F_{mod}(\bv{r^{ }_{SP}})$ using n-a acquired samples};	\\					
+			\node [block_center] (calct) {Calculate $T_{SP}$};	\\					
+   };% end matrix
+    % connecting nodes with paths
+    \begin{scope}[every path/.style=line]
+      \path (acquire)     -- (sim);
+			\path (sim)     -- (calcm);
+			\path (calcm)     -- (minf);
+			\path (minf)     -- (calcts);
+			\path (calcts)     -- (minfmod);
+			\path (minfmod)     -- (calct);			
+    \end{scope}		
+  \end{tikzpicture}
