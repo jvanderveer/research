@@ -132,17 +132,38 @@ Inverse Problems \sep Computational Heat Transfer \sep Convection
 \section{Introduction}
 Thermal-fluid systems often create situations where the engineering problem is an inverse heat transfer problem.  These problems often have limited physical access, very limited to no boundary condition knowledge, and/or limited domain knowledge.
 
-For example, the temperature distribution of an optical fiber drawing furnace is difficult to measure directly due to shape, inaccessibility, and high temperatures.  The center of the furnace is easily accessible and this directly leads to an inverse heat transfer problem.  \Citet{issa} developed a regularization technique utilizing the centerline temperature from which the wall temperature may be obtained.
+For example, the temperature distribution of an optical fiber drawing furnace is difficult to measure directly due to shape, inaccessibility, and high temperatures.  The center of the furnace is easily accessible and this directly leads to an inverse heat transfer problem.  \Citet{issa} \cite{iss} developed a regularization technique utilizing the centerline temperature from which the wall temperature may be obtained.
+
+Another example, is the inverse plume in a crossflow problem.  The problem entails solving for the plume boundary conditions utilizing limited domain knowledge.  A novel predictor-corrector method was developed by \citet{ijhmt1} \cite{ijhmt1} to solve such a problem.  
 
 
+The present work is the logical progression of the inverse plume in a crossflow problem, the inverse jet in a crossflow problem.  The inverse jet in a crossflow problem has many more practical applications and ...
 
 
 
 
 
 \section{Experimental System}
+The experiment consists of a wind tunnel with a surface level jet located within the test section.  The jet uses compressed air passed through flow straighteners to achieve a velocity of $U_S$ and is heated to temperature $T_S$.  The jet is subjected to a perpendicular crossflow of velocity $U_{\infty}$.  \Cref{fig:diagramjet} is a diagram of the wind tunnel and jet, dimensions are in millimeters.
+
+\begin{figure}[!tbp]
+\begin{center}
+\includegraphics[scale=.30]{windtunneljet.jpg}
+\caption{Schematics of the wind tunnel and jet}
+\label{fig:diagramjet}
+\end{center}
+\end{figure}
+
+The wind tunnel test section dimensions are $54.5\times305\times 254\,mm$.  The maximum velocity of the wind tunnel is $5.0\,m/s$.  The jet is heated by electric cartridge heaters with a maximum temperature of $425\,K$ due to material limitations of the wind tunnel.  The X-direction is directed downstream of the wind tunnel with the zero at the center of the jet.  The Y-direction is in the direction of the jet and is zero at the surface of the wind tunnel.  Due to the large aspect ratio of the wind tunnel the flow is assumed to be two-dimensional.
+
+The free stream velocity is determined by a Pitot-Static tube attached to a NIST traceable differential pressure sensor from Omega(PX655-0.1DI).  The pressure sensor has a full scale reading of 0.1 inches of water and is accurate to $0.05\%$ of full scale.  This results in a maximum of $3\%$ error of the calculated velocity.
+
+The jet velocity is determined utilizing a rotameter and verified using a Pitot-Static tube attached to the same previously described pressure sensor.  This results in the same amount of error of $3\%$ for the jet velocity.
+
+The temperature of domain is measured using a K-type thermocouple mounted to an X-Y traversing stage.  Sampled data over the course of several days indicate repeatability of the experiment to within $2\%$.
 
 \section{Numerical Simulations}
+The simulations were all performed using Ansys Fluent\cite{fluentsoftware}.
 
 
 
