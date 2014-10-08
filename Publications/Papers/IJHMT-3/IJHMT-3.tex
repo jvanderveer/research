@@ -132,7 +132,7 @@ Inverse Problems \sep Computational Heat Transfer \sep Convection
 \section{Introduction}
 Thermal-fluid systems often create situations where the engineering problem is an inverse heat transfer problem.  These problems often have limited physical access, very limited to no boundary condition knowledge, and/or limited domain knowledge.
 
-For example, the temperature distribution of an optical fiber drawing furnace is difficult to measure directly due to shape, inaccessibility, and high temperatures.  The center of the furnace is easily accessible and this directly leads to an inverse heat transfer problem.  \Citet{issa} \cite{iss} developed a regularization technique utilizing the centerline temperature from which the wall temperature may be obtained.
+For example, the temperature distribution of an optical fiber drawing furnace is difficult to measure directly due to shape, inaccessibility, and high temperatures.  The center of the furnace is easily accessible and this directly leads to an inverse heat transfer problem.  \Citet{issa} \cite{issa} developed a regularization technique utilizing the centerline temperature from which the wall temperature may be obtained.
 
 Another example, is the inverse plume in a crossflow problem.  The problem entails solving for the plume boundary conditions utilizing limited domain knowledge.  A novel predictor-corrector method was developed by \citet{ijhmt1} \cite{ijhmt1} to solve such a problem.  
 
@@ -154,7 +154,7 @@ The experiment consists of a wind tunnel with a surface level jet located within
 \end{center}
 \end{figure}
 
-The wind tunnel test section dimensions are $54.5\times305\times 254\,mm$.  The maximum velocity of the wind tunnel is $5.0\,m/s$.  The jet is heated by electric cartridge heaters with a maximum temperature of $425\,K$ due to material limitations of the wind tunnel.  The X-direction is directed downstream of the wind tunnel with the zero at the center of the jet.  The Y-direction is in the direction of the jet and is zero at the surface of the wind tunnel.  Due to the large aspect ratio of the wind tunnel the flow is assumed to be two-dimensional.
+The wind tunnel test section dimensions are $54.5\times305\times 254\,mm$.  The maximum velocity of the wind tunnel is $5.0\,m/s$.  The jet is heated by electric cartridge heaters (Omega AHP-7561) with a maximum temperature of $425\,K$ due to material limitations of the wind tunnel.  The X-direction is directed downstream of the wind tunnel with the zero at the center of the jet.  The Y-direction is in the direction of the jet and is zero at the surface of the wind tunnel.  Due to the large aspect ratio of the wind tunnel the flow is assumed to be two-dimensional.
 
 The free stream velocity is determined by a Pitot-Static tube attached to a NIST traceable differential pressure sensor from Omega(PX655-0.1DI).  The pressure sensor has a full scale reading of 0.1 inches of water and is accurate to $0.05\%$ of full scale.  This results in a maximum of $3\%$ error of the calculated velocity.
 
@@ -163,7 +163,109 @@ The jet velocity is determined utilizing a rotameter and verified using a Pitot-
 The temperature of domain is measured using a K-type thermocouple mounted to an X-Y traversing stage.  Sampled data over the course of several days indicate repeatability of the experiment to within $2\%$.
 
 \section{Numerical Simulations}
-The simulations were all performed using Ansys Fluent\cite{fluentsoftware}.
+The simulations were all performed using Ansys Fluent\cite{fluentsoftware}.  The Navier-Stokes equations were solved using a three-dimensional, steady state, realizable $k-\epsilon$ model with enhanced wall effects.  Conjugate heat transfer is modelled.  The free stream Reynolds number is of order $6\times10^3$, while the jet Reynolds number is between $10^3$ and $10^4$.  The Rayleigh number is of order $10^7$.
+
+The governing equations are expressed below:
+
+\begin{equation}
+\centering
+u_i = \overline{u_i} + u^{'}_{i}
+\label{eq:veldecomp}
+\end{equation}
+
+\begin{equation}
+\frac{\partial \rho }{\partial t } + \frac{\partial }{\partial x_i} \left( \rho u_i \right) = 0 
+\label{eq:mass}
+\end{equation}
+
+\begin{equation}
+\centering
+\begin{split}
+\frac{\partial }{\partial t} \left( \rho u_i \right) &+ \frac{\partial }{\partial x_j } \left( \rho u_i u_j \right) = \\
+ &\frac{\partial P}{\partial x_i } + \frac{\partial }{\partial x_j } \left[ \mu \left( 2 S_{ij} - \frac{2}{3} \delta_{ij} \frac{\partial u_k }{\partial x_k } \right) - \rho \overline{u^{'}_{i} u^{'}_{j}} \right] 
+\label{eq:momentum}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\centering
+\begin{split}
+\frac{\partial }{\partial t } \left( \rho E \right) &+ \frac{\partial }{\partial x_i} \left[ u_i \left( \rho E + P \right) \right] = \\
+ &\frac{\partial }{\partial x_i } \left[ \left( \lambda + \frac{C_p \mu_t }{P_{rt}} \right) \frac{\partial T}{\partial x_i} \right] 
+\label{eq:energy}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\centering
+\begin{split}
+\frac{\partial }{\partial t} \left(\rho k \right) &+ \frac{\partial }{\partial x_j} \left( \rho k u_j \right) = \\
+&\frac{\partial }{\partial x_j} \left[ \left( \mu + \frac{\mu_t}{\sigma_k} \right) \frac{\partial k}{\partial x_j} \right] + \frac{\partial u_j}{\partial x_i} \left( -\rho \overline{u^{'}_{i} u^{'}_{j}} \right) \\
+&- g_i \frac{\mu_t}{\rho P_{rt}} \frac{\partial \rho }{\partial x_i} + \rho \epsilon
+\label{eq:k}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\centering
+\begin{split}
+ \frac{\partial }{\partial t} \left(\rho \epsilon \right) &+ \frac{\partial }{\partial x_j} \left( \rho \epsilon u_j \right) = \\
+ &\frac{\partial }{\partial x_j } \left[ \left( \mu + \frac{\mu_t }{\sigma_\epsilon } \right) \frac{\partial \epsilon }{\partial x_j } \right] + \rho C_1 S \epsilon - \rho C_2 \frac{\epsilon^2 }{k+\sqrt{\nu \epsilon}} \\
+ &- C_{1 \epsilon} \frac{\epsilon}{k} C_{3\epsilon} g_i \frac{\mu_t}{\rho P_{rt}} \frac{\partial \rho}{\partial x_i}
+\label{eq:e}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\centering
+- \rho \overline{u^{'}_{i} u^{'}_{j}} = 2\mu_t S_{ij} - \frac{2}{3} \delta_{ij} \left( \rho k + \mu_t \frac{\partial u_k}{\partial x_k} \right)
+\label{eq:reynoldsstress}
+\end{equation}
+
+The constants for the turbulence model are \cite{realizable,fluent} : 
+\begin{equation}
+\label{eq:constants}
+C_{1\epsilon} = 1.44 , C_2 = 1.9 , \sigma_k = 1.0 , \sigma_\epsilon = 1.2 , P_{rt} = 0.85 
+\end{equation}
+\begin{equation}
+C_1 = max\left[0.43,\frac{Sk/\epsilon}{Sk/\epsilon +5} \right] , S = \sqrt{2S_{ij}S_{ji}} , C_{3\epsilon} = tanh\left(\frac{u_g}{u_p}\right)
+\end{equation}
+\begin{subequations}
+\begin{align}
+\mu_t &= \frac{\rho C_{\mu} k^2}{\epsilon} \\
+C_{\mu} &= \frac{1}{A_0 + \frac{A_1 k U^*}{\epsilon}} \\
+U^* &\equiv \sqrt{S_{ij} S_{ji} + \Omega_{ij} \Omega_{ji}} \\
+A_0 &= 4.04 \\
+A_1 &= \sqrt{6} cos \left[\frac{1}{3} cos^{-1}\left(\sqrt{6} \frac{S_{ij}S_{jk}S_{ki}}{\left(S_{ij} S_{ji} \right)^{\frac{3}{2}}} \right) \right] \\
+S_{ij} &= \frac{1}{2} \left( \frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i} \right) \\
+\Omega_{ij} &= \frac{1}{2} \left( \frac{\partial u_i}{\partial x_j} - \frac{\partial u_j}{\partial x_i} \right)
+\end{align}
+\end{subequations}
+Where the $u_g$ and $u_p$ are the velocity component parallel and perpendicular to gravity respectively.
+
+The inflow boundary conditions are:
+\begin{subequations}
+\label{eq:inflow}
+\begin{align}
+u&=U_\infty , v=0 , T=T_\infty , P = P_\infty , l=4 mm , I=5\%\\
+k&=\frac{3}{2}\left(U_\infty I\right)^2 \\
+\epsilon &=C_{\mu}^{3/4} \frac{k^{3/2}}{l}
+\end{align}
+\end{subequations}
+
+The jet inflow boundary conditions are:
+\begin{subequations}
+\label{eq:inflowjet}
+\begin{align}
+u&=0 , v=U_S , T=T_S , P = P_\infty , l=4 mm , I=5\%\\
+k&=\frac{3}{2}\left(U_\infty I\right)^2 \\
+\epsilon &=C_{\mu}^{3/4} \frac{k^{3/2}}{l}
+\end{align}
+\end{subequations}
+
+The upper boundary was taken to be symmetric to reduce the possibility of errors by the experimentally accurate no-slip condition.  The upper boundary is very far from the jet and therefore should have negligible effect on the numerical result.  The bottom of the wind tunnel is made up of $12\, mm$ thick acrylic, while the test section is $25.4\,mm$ thick acrylic.  The external boundary conditions are iso-thermal with a temperature of $T_{\infty}$.  The test section external temperature is iso-thermal of $\frac{1}{2}\left(T_S+T_{\infty}\right)$.  The outflow boundary is a simple pressure outflow of $P_{\infty}$.
+
+\subsection{Simulation Validation}
 
 
 
