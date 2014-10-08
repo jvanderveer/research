@@ -266,9 +266,78 @@ k&=\frac{3}{2}\left(U_\infty I\right)^2 \\
 The upper boundary was taken to be symmetric to reduce the possibility of errors by the experimentally accurate no-slip condition.  The upper boundary is very far from the jet and therefore should have negligible effect on the numerical result.  The bottom of the wind tunnel is made up of $12\, mm$ thick acrylic, while the test section is $25.4\,mm$ thick acrylic.  The external boundary conditions are iso-thermal with a temperature of $T_{\infty}$.  The test section external temperature is iso-thermal of $\frac{1}{2}\left(T_S+T_{\infty}\right)$.  The outflow boundary is a simple pressure outflow of $P_{\infty}$.
 
 \subsection{Simulation Validation}
+A simulation validation study was performed to verify the results of the simulations.  Typical verification was performed including flow model, grid independence, iterative convergence, and lastly comparison with experimental results.  The conditions of the simulation validation are shown in \cref{tab:VTjet}.
 
+\begin{table}[!t!b!p]
+\begin{center}
+\begin{tabular}{ c c }
+\hline
+Parameter    & Value \\ \hline
+$U_{\infty} \, (m/s)$ & $2.0\pm0.02$ \\
+$U_S \, (m/s)$ & $2.0\pm0.2$ \\
+$T_{\infty} \, (K) $ & $305\pm0.5$ \\
+$P_{\infty} \, (kPa) $ & $101.3\pm0.01$ \\
+$T_{S} \, (K) $ & $350\pm2.0$ \\ \hline
+\end{tabular}
+\caption{Validation test conditions}
+\label{tab:VTjet}
+\end{center}
+\end{table}
 
+The results from Spalart-Allmaras, $k-\epsilon$, and $k-\omega$ were compared and the three models have a similar trend.  SA tends to be a bit off, but this is expected due to issues with this type of problem\cite{fluent}.  All of the values were normalized utilizing the following equations, where $D$ is the width of the jet.  \Cref{fig:jetmodel15mm} shows a comparison of the flow models at $X=4.75$.
+\begin{align}
+\phi &= \frac{T-T_{\infty}}{T_S-T_{\infty}} \\
+X &= \frac{x}{D} \\
+Y &= \frac{y}{D} \\
+V &= \frac{U}{U_\infty}  \\
+V_S &= \frac{U_S}{U_{\infty}}
+\end{align}
+\end{subequations}
+\begin{figure}[!tbp]
+	\centering
+  \setlength\figureheight{5cm} 
+	\setlength\figurewidth{5cm}
+	\input{jetmodel15mm.tikz}
+	\caption{Validation of the simulation: local temperature using three flow models at $X=4.75$}
+	\label{fig:jetmodel15mm}
+\end{figure}
 
+Grid independence is demonstrated by testing the temperature at a few locations with various grid sizes and geometries, as shown in \cref{tab:gridjet}.  Very little variation in simulated temperature over such a wide variety of cell counts shows that the result is most likely grid independent.  The grid employed is an unstructured hexagonal mesh with refinement located near the jet and down stream of the jet.
+\begin{table}[!t!b!p]
+\begin{center}
+\begin{tabular}{ c c c c c }
+\hline
+ Location (x,y) (mm) & 0,1 & 10,5 & 15,5& 30,10 \\ \hline \hline
+ Cell Count & \\ \hline
+ 57660  & 337.7 & 323.3 & 321.6 & 310.1 \\ \hline
+ 83888  & 337.7 & 323.3 & 321.6 & 310.1 \\ \hline
+ 166352 & 337.7 & 323.2 & 321.5 & 310.1 \\ \hline
+ 366168 & 337.7 & 323.2 & 321.5 & 310.1 \\ \hline
+\end{tabular}
+\caption{Grid Independence Study, local static temperature (K)}
+\label{tab:gridjet}
+\end{center}
+\end{table}
+
+Iterative convergence is typically proven by increasing the residual requirements to very tiny amounts.  In this case, due to the extremely small elements within the jet, a residual of $10^{-8}$ was used.  \Cref{fig:jetiterate15mm} is a plot of error compared to the $10^{-8}$ residuals for several residual cases.  It can be seen that the error is progressively reducing and a residual of $10^{-6}$ should give acceptable iterative errors (experimental - numerical errors will be much larger).
+\begin{figure}[!htbp]
+	\centering
+  \setlength\figureheight{7cm} 
+	\setlength\figurewidth{7cm}
+	\input{jetiterate15mm.tikz}
+	\caption{Validation of the simulation: local temperature error vs residuals set to $10^{-8}$ at $X=4.75$}
+	\label{fig:jetiterate15mm}
+\end{figure}
+
+The final validation is comparing the simulation against the experiment.  This is done in \cref{fig:jetexp15}.  The simulation matches the experiment closely, with the exception of very close to the wall.
+\begin{figure}[!htbp]
+	\centering
+	\setlength\figureheight{7cm} 
+	\setlength\figurewidth{7cm}
+	\input{jetexp15mm.tikz}
+	\caption{Validation of the simulation: local temperature - experiment versus simulation at $X=4.75$}
+	\label{fig:jetexp15}
+\end{figure}
 \section{Inverse Solution Methodology}
 
 

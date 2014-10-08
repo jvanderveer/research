@@ -1,0 +1,47 @@
+  % setting the typeface to sans serif and the font size to small
+  % the scope local to the environment
+  \sffamily
+  \footnotesize
+  \begin{tikzpicture}[auto,
+    %decision/.style={diamond, draw=black, thick, fill=white,
+    %text width=8em, text badly centered,
+    %inner sep=1pt, font=\sffamily\small},
+    block_center/.style ={rectangle, draw=black, thick, fill=white,
+      text width=24em, text centered,
+      minimum height=4em},
+    block_left/.style ={rectangle, draw=black, thick, fill=white,
+      text width=16em, text ragged, minimum height=4em, inner sep=6pt},
+    block_noborder/.style ={rectangle, draw=none, thick, fill=none,
+      text width=18em, text centered, minimum height=1em},
+    block_assign/.style ={rectangle, draw=black, thick, fill=white,
+      text width=18em, text ragged, minimum height=3em, inner sep=6pt},
+    block_lost/.style ={rectangle, draw=black, thick, fill=white,
+      text width=16em, text ragged, minimum height=3em, inner sep=6pt},
+      line/.style ={draw, thick, -latex', shorten >=0pt}]
+    % outlining the flowchart using the PGF/TikZ matrix funtion
+    \matrix [column sep=5mm,row sep=3mm] {
+			\node [block_center] (acquire) {Acquire n samples of unknown source strength and location};\\
+		  \node [block_center] (sim) {Simulate d test domains spanning thermal region of interest};	\\		
+		  \node [block_center] (jet) {Guess $U_{SP}$};	\\				  
+			\node [block_center] (calcm) {Calculate $m( \bv r)$ and $b( \bv r)$};	\\		
+			\node [block_center] (minf) {Find minimization of $F( \bv r)$ where $\left. F( \bv r) \right|_{min} = F(\bv{r^{\ast}_{SP}})$ using a acquired samples};	\\					
+			\node [block_center] (calcts) {Calculate $T_{SP}$};	\\		
+			\node [block_center] (calca) {Calculate $\Gamma_2( \bv r)$, $\Gamma_1( \bv r)$, and $\Gamma_0( \bv r)$};	\\		
+			\node [block_center] (ming) {Find minimization of $G(\bv r)$ where $\left. G( \bv r) \right|_{min} = G(\bv{r_{SP}})$ using n-a acquired samples};	\\					
+			\node [block_center] (calcu) {Calculate $U_{SP}$};	\\					
+			\node [block_center] (repeat) {Repeat until $\Delta U_{SP} < \epsilon_U$ and $\Delta T_{SP} < \epsilon_T$};	\\					
+   };% end matrix
+    % connecting nodes with paths
+    \begin{scope}[every path/.style=line]
+      \path (acquire)     -- (sim);
+			\path (sim)     -- (jet);
+			\path (jet)     -- (calcm);			
+			\path (calcm)     -- (minf);
+			\path (minf)     -- (calcts);			
+			\path (calcts)     -- (calca);
+			\path (calca)     -- (ming);
+			\path (ming)     -- (calcu);
+     		\path (calcu)     -- (repeat);
+			\path (repeat.east) |- ++(1.5,0) |- (calcm.east);
+    \end{scope}		
+  \end{tikzpicture}
