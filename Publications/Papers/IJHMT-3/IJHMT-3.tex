@@ -285,6 +285,7 @@ $T_{S} \, (K) $ & $350\pm2.0$ \\ \hline
 \end{table}
 
 The results from Spalart-Allmaras, $k-\epsilon$, and $k-\omega$ were compared and the three models have a similar trend.  SA tends to be a bit off, but this is expected due to issues with this type of problem\cite{fluent}.  All of the values were normalized utilizing the following equations, where $D$ is the width of the jet.  \Cref{fig:jetmodel15mm} shows a comparison of the flow models at $X=4.75$.
+\begin{subequations}
 \begin{align}
 \phi &= \frac{T-T_{\infty}}{T_S-T_{\infty}} \\
 X &= \frac{x}{D} \\
@@ -322,24 +323,25 @@ Grid independence is demonstrated by testing the temperature at a few locations 
 Iterative convergence is typically proven by increasing the residual requirements to very tiny amounts.  In this case, due to the extremely small elements within the jet, a residual of $10^{-8}$ was used.  \Cref{fig:jetiterate15mm} is a plot of error compared to the $10^{-8}$ residuals for several residual cases.  It can be seen that the error is progressively reducing and a residual of $10^{-6}$ should give acceptable iterative errors (experimental - numerical errors will be much larger).
 \begin{figure}[!htbp]
 	\centering
-  \setlength\figureheight{7cm} 
-	\setlength\figurewidth{7cm}
+  \setlength\figureheight{5cm} 
+	\setlength\figurewidth{5cm}
 	\input{jetiterate15mm.tikz}
 	\caption{Validation of the simulation: local temperature error vs residuals set to $10^{-8}$ at $X=4.75$}
 	\label{fig:jetiterate15mm}
 \end{figure}
 
-The final validation is comparing the simulation against the experiment.  This is done in \cref{fig:jetexp15}.  The simulation matches the experiment closely, with the exception of very close to the wall.
+The final validation is comparing the simulation against the experiment.  This is done in \cref{fig:jetexp15}.  The simulation matches the experiment closely, with the exception of very close to the wall.  This is to be expected as the flow models used, even with enhanced wall effects, have difficulty perfectly modelling the near wall conditions.
 \begin{figure}[!htbp]
 	\centering
-	\setlength\figureheight{7cm} 
-	\setlength\figurewidth{7cm}
+	\setlength\figureheight{5cm} 
+	\setlength\figurewidth{5cm}
 	\input{jetexp15mm.tikz}
 	\caption{Validation of the simulation: local temperature - experiment versus simulation at $X=4.75$}
 	\label{fig:jetexp15}
 \end{figure}
-\section{Inverse Solution Methodology}
 
+\section{Inverse Solution Methodology}
+The basis for the solution strategy was described in a paper by \citet{ijhmt1}, which was originally intended to solve the inverse plume in a crosswind.  A modified version of the methodology will be presented here.  
 
 
 
