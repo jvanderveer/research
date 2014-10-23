@@ -38,7 +38,7 @@
 
 
 \pdfinfo{%
-  /Title(Optimization of an Inverse Convection Solution Strategy)
+  /Title(Solution of the Inverse Jet in a Crossflow Problem by a Predictor-Corrector Technique)
   /Author   (Yogesh Jaluria)
     /Author   (Joseph R VanderVeer)
   /Creator  (Joseph R VanderVeer)
@@ -48,7 +48,7 @@
 \begin{document}
 
 \begin{frontmatter}
-\title{Optimization of an Inverse Convection Solution Strategy}
+\title{Solution of the Inverse Jet in a Crossflow Problem by a Predictor-Corrector Technique}
 
 \author{Joseph R VanderVeer}
 \author{Yogesh Jaluria\corref{cor}}
@@ -132,15 +132,11 @@ Inverse Problems \sep Computational Heat Transfer \sep Convection
 \section{Introduction}
 Thermal-fluid systems often create situations where the engineering problem is an inverse heat transfer problem.  These problems often have limited physical access, very limited to no boundary condition knowledge, and/or limited domain knowledge.
 
-For example, the temperature distribution of an optical fiber drawing furnace is difficult to measure directly due to shape, inaccessibility, and high temperatures.  The center of the furnace is easily accessible and this directly leads to an inverse heat transfer problem.  \Citet{issa} \cite{issa} developed a regularization technique utilizing the centerline temperature from which the wall temperature may be obtained.
+For example, the temperature distribution of an optical fiber drawing furnace is difficult to measure directly due to shape, inaccessibility, and high temperatures.  The center of the furnace is easily accessible and this directly leads to an inverse heat transfer problem.  \Citet{issa} developed a regularization technique utilizing the centerline temperature from which the wall temperature may be obtained.
 
-Another example, is the inverse plume in a crossflow problem.  The problem entails solving for the plume boundary conditions utilizing limited domain knowledge.  A novel predictor-corrector method was developed by \citet{ijhmt1} \cite{ijhmt1} to solve such a problem.  
+Another example, is the inverse plume in a crossflow problem.  The problem entails solving for the plume boundary conditions utilizing limited domain knowledge.  A novel predictor-corrector method was developed by \citet{ijhmt1} to solve such a problem.  The method requires a specific pattern of known points to match exactly to predict the inverse solution.  The specific pattern was optimized to require the least number of known points for plume in a crossflow problem \cite{ijhmt2}.  With zero error in the data a minimum of three known points was possible, but small amounts of error would require the known point count to increase to at least five.
 
-
-The present work is the logical progression of the inverse plume in a crossflow problem, the inverse jet in a crossflow problem.  The inverse jet in a crossflow problem has many more practical applications and ...
-
-
-
+The present work is the logical progression of the inverse plume in a crossflow problem, the inverse jet in a crossflow problem.  The inverse jet in a crossflow problem has many more practical applications such as exhaust stacks and fuel injection systems.  The previous technique will be modified to meet the needs of the new problem.
 
 
 \section{Experimental System}
@@ -266,7 +262,7 @@ k&=\frac{3}{2}\left(U_\infty I\right)^2 \\
 The upper boundary was taken to be symmetric to reduce the possibility of errors by the experimentally accurate no-slip condition.  The upper boundary is very far from the jet and therefore should have negligible effect on the numerical result.  The bottom of the wind tunnel is made up of $12\, mm$ thick acrylic, while the test section is $25.4\,mm$ thick acrylic.  The external boundary conditions are iso-thermal with a temperature of $T_{\infty}$.  The test section external temperature is iso-thermal of $\frac{1}{2}\left(T_S+T_{\infty}\right)$.  The outflow boundary is a simple pressure outflow of $P_{\infty}$.
 
 \subsection{Simulation Validation}
-A simulation validation study was performed to verify the results of the simulations.  Typical verification was performed including flow model, grid independence, iterative convergence, and lastly comparison with experimental results.  The conditions of the simulation validation are shown in \cref{tab:VTjet}.
+A simulation validation study was performed to verify the results of the simulations.  Typical verification was performed including flow model, grid independence, and comparison with experimental results.  The conditions of the simulation validation are shown in \cref{tab:VTjet}.
 
 \begin{table}[!t!b!p]
 \begin{center}
@@ -320,15 +316,15 @@ Grid independence is demonstrated by testing the temperature at a few locations 
 \end{center}
 \end{table}
 
-Iterative convergence is typically proven by increasing the residual requirements to very tiny amounts.  In this case, due to the extremely small elements within the jet, a residual of $10^{-8}$ was used.  \Cref{fig:jetiterate15mm} is a plot of error compared to the $10^{-8}$ residuals for several residual cases.  It can be seen that the error is progressively reducing and a residual of $10^{-6}$ should give acceptable iterative errors (experimental - numerical errors will be much larger).
-\begin{figure}[!htbp]
-	\centering
-  \setlength\figureheight{5cm} 
-	\setlength\figurewidth{5cm}
-	\input{jetiterate15mm.tikz}
-	\caption{Validation of the simulation: local temperature error vs residuals set to $10^{-8}$ at $X=4.75$}
-	\label{fig:jetiterate15mm}
-\end{figure}
+%Iterative convergence is typically proven by increasing the residual requirements to very tiny amounts.  In this case, due to the extremely small elements within the jet, a residual of $10^{-8}$ was used.  \Cref{fig:jetiterate15mm} is a plot of error compared to the $10^{-8}$ residuals for several residual cases.  It can be seen that the error is progressively reducing and a residual of $10^{-6}$ should give acceptable iterative errors (experimental - numerical errors will be much larger).
+%\begin{figure}[!htbp]
+%	\centering
+%  \setlength\figureheight{5cm} 
+%	\setlength\figurewidth{5cm}
+%	\input{jetiterate15mm.tikz}
+%	\caption{Validation of the simulation: local temperature error vs residuals set to $10^{-8}$ at $X=4.75$}
+%	\label{fig:jetiterate15mm}
+%\end{figure}
 
 The final validation is comparing the simulation against the experiment.  This is done in \cref{fig:jetexp15}.  The simulation matches the experiment closely, with the exception of very close to the wall.  This is to be expected as the flow models used, even with enhanced wall effects, have difficulty perfectly modelling the near wall conditions.
 \begin{figure}[!htbp]
@@ -341,13 +337,411 @@ The final validation is comparing the simulation against the experiment.  This i
 \end{figure}
 
 \section{Inverse Solution Methodology}
-The basis for the solution strategy was described in a paper by \citet{ijhmt1}, which was originally intended to solve the inverse plume in a crosswind.  A modified version of the methodology will be presented here.  
+The basis for the solution strategy was described in a paper by \citet{ijhmt1}, which was originally intended to solve the inverse plume in a crosswind.  The original methodology solved for the 2-D location and source strength of a plume in a crossflow.  The jet in a crossflow must handle one additional parameter, the jet velocity.  Due to this extra parameter a modified version of the original solution strategy will be presented here.
+
+\Citet{knight} used a quadratic response surface model to determine the jet temperature and jet velocity.  This method is not easily adapted to include unknown source location.
+
 
 
 
 
 \section{Results and discussions}
 
+%An incremental approach to solving the jet problem was used.  Starting with the simplest cases working towards the most difficult, and finally adding in the complexity that is the experimental results.    There are twenty-four selected cases used to demonstrate the capabilities of the described methodology.  The cases are labeled A-X, and the conditions are listed in \cref{tab:jetcases}.  Non-varying parameters are listed in \cref{tab:STjet}.
+%
+\begin{table}[!t!b!p]
+\begin{center}
+\begin{tabular}{ l | c c c c c c}
+\hline
+ $U_{S}$ $(m/s)$ & 1 & 1 & 2 & 2 & 4 & 4 \\ \hline
+ $T_S$ $(K)$ & 375 & 425 & 375 & 425 & 375 & 425  \\ \hline \hline
+ Location (x,y) & \\
+ 10 mm, 1 mm & A & B & C & D & E & F \\ \hline
+ 10 mm, 3 mm & G & H & I & J & K & L \\ \hline
+ 20 mm, 1 mm & M & N & O & P & Q & R \\ \hline
+ 20 mm, 3 mm & S & T & U & V & W & X \\ \hline
+ \end{tabular}
+\caption{Several sampled case parameters}
+\label{tab:jetcases}
+\end{center}
+\end{table}
+%
+\begin{table}[!h!t!b!p]
+\begin{center}
+\begin{tabular}{ c c }
+\hline
+Parameter    & Value \\ \hline
+$U_{\infty} \, (m/s)$ & $2$ \\
+$T_{\infty} \, (K) $ & $293$ \\
+$P_{\infty} \, (kPa) $ & $101.3$ \\ \hline
+\end{tabular}
+\caption{Simulation test conditions}
+\label{tab:STjet}
+\end{center}
+\end{table}
+
+%The next two steps utilize a single sample point, however, the rest use the nine sample points listed in \cref{tab:expoptresults}.  The search shape used here is the optimized search shape for a plume with all nine sample points included.  Utilizing a jet optimized search shape may yield better results.
+
+\subsection{Source Location and Velocity Known}
+
+%The first step is unknown source temperature, the methodology breaks down to a simple linear equation similar to that of the plume case.  The linear equation allows the use of a single sample point to solve the inverse problem.  The results of the selected cases are shown in \cref{fig:typejetAT}.  The error is typically less than $0.1\%$, except in four cases.  The four cases with large error are located outside or near the edge of the jet.  The temperature at these locations is near ambient and the Matlab polynomial curve fit has issues with the data points very similar to each other, often giving results of magnitude $10^{\pm10}$ or worse.  What this means is that the error for these four points is essentially caused by machine error.
+
+\begin{figure}[!t!b!p]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    %ybar=5pt,
+    %bar width=7pt,
+    ybar=100pt,
+    bar width = 5pt,
+    x=0.4cm,
+    ymin=0,
+    axis on top,
+    ymax=1,
+    xtick=data,
+    xlabel={Selected Cases},
+	ylabel={Source temperature prediction error (\%)},
+%    enlarge x limits=0.2,
+    symbolic x coords={A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X},
+    restrict y to domain*=0:1.1, % Cut values off at 1.1
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    nodes near coords=\rotatebox{90}{%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    axis lines*=left,
+    clip=false
+    ]
+\addplot[black,fill=black!25] coordinates {
+(A,0.00)(B,0.00)(C,0.02)(D,0.02)(E,0.03)(F,0.04)
+(G,0.60)(H,0.70)(I,0.04)(J,0.05)(K,0.04)(L,0.03)
+(M,0.00)(N,0.01)(O,0.00)(P,0.00)(Q,0.02)(R,0.02)
+(S,0.20)(T,0.21)(U,0.02)(V,0.02)(W,0.00)(X,0.00)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Error in the prediction of $T_S$ from several sampled cases within the jet with $\bv{r_S}$ and $U_S$ known}
+\label{fig:typejetAT}
+\end{center}
+\end{figure}
+
+\subsection{Source Location and Temperature Known}
+%Another simple case is that of the when the source velocity is not known.  This step also breaks down to a relatively simple equation, but this time the equation is that of \cref{eq:Us} and thus  quadratic.  This particular equation does not perfectly model the velocity profile, but as is seen in \cref{fig:typejetBU}, it is still good.  The error associated with this is never more than $\approx1\%$, which is likely less than that of any experimental error.  In this case, it is certainly less than the experimental error.  Again, the simulation parameters are described in \cref{tab:jetcases,tab:STjet}.
+\begin{figure}[!t!b!p]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    %ybar=5pt,
+    %bar width=7pt,
+    ybar=100pt,
+    bar width = 5pt,
+    x=0.4cm,
+    ymin=0,
+    axis on top,
+    ymax=1,
+    xtick=data,
+    xlabel={Selected Cases},
+	ylabel={Source velocity prediction error (\%)},
+%    enlarge x limits=0.2,
+    symbolic x coords={A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X},
+    restrict y to domain*=0:1.1, % Cut values off at 1.1
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    nodes near coords=\rotatebox{90}{%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    axis lines*=left,
+    clip=false
+    ]
+\addplot[black,fill=black!25] coordinates {
+(A,0.50)(B,0.91)(C,0.50)(D,1.01)(E,0.72)(F,0.73)
+(G,0.53)(H,0.87)(I,0.34)(J,0.10)(K,0.12)(L,0.56)
+(M,0.11)(N,0.10)(O,0.02)(P,0.02)(Q,0.01)(R,0.03)
+(S,0.70)(T,0.24)(U,0.08)(V,0.10)(W,0.07)(X,0.00)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Error in the prediction of $U_S$ from several sampled cases within the jet with $\bv{r_S}$ and $T_S$ known}
+\label{fig:typejetBU}
+\end{center}
+\end{figure}
+
+\subsection{Source Location Known}
+%Step three is a bit more complicated.  The method would ideally breakdown to that of the response surface model of \citet{knight}.  This however, cannot be the case as the methodology has the two equations separated and thus, they still need to be solved iteratively.  The selected cases are shown in \cref{fig:typejetCT,fig:typejetCU}, and are of the error in predicting the source temperature and velocity.  A few of the selected cases improved in accuracy due to the increase in the number of sample points.
+
+\begin{figure}[!t!b!p]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    %ybar=5pt,
+    %bar width=7pt,
+    ybar=100pt,
+    bar width = 5pt,
+    x=0.4cm,
+    ymin=0,
+    axis on top,
+    ymax=1,
+    xtick=data,
+    xlabel={Selected Cases},
+	ylabel={Source temperature prediction error (\%)},
+%    enlarge x limits=0.2,
+    symbolic x coords={A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X},
+    restrict y to domain*=0:1.1, % Cut values off at 1.1
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    nodes near coords=\rotatebox{90}{%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    axis lines*=left,
+    clip=false
+    ]
+\addplot[black,fill=black!25] coordinates {
+(A,0.10)(B,0.30)(C,0.12)(D,0.13)(E,0.13)(F,0.36)
+(G,0.91)(H,1.09)(I,0.14)(J,0.18)(K,0.12)(L,0.46)
+(M,0.23)(N,0.01)(O,0.21)(P,0.03)(Q,0.35)(R,0.21)
+(S,0.61)(T,0.54)(U,0.12)(V,0.18)(W,0.11)(X,0.12)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Error in the prediction of $T_S$ from several sampled cases within the jet with $\bv{r_S}$ known}
+\label{fig:typejetCT}
+\end{center}
+\end{figure}
+
+\begin{figure}[!t!b!p]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    %ybar=5pt,
+    %bar width=7pt,
+    ybar=100pt,
+    bar width = 5pt,
+    x=0.4cm,
+    ymin=0,
+    axis on top,
+    ymax=1.5,
+    xtick=data,
+    xlabel={Selected Cases},
+	ylabel={Source velocity prediction error (\%)},
+%    enlarge x limits=0.2,
+    symbolic x coords={A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X},
+    restrict y to domain*=0:1.5, % Cut values off at 1.1
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    nodes near coords=\rotatebox{90}{%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    axis lines*=left,
+    clip=false
+    ]
+\addplot[black,fill=black!25] coordinates {
+(A,1.11)(B,1.32)(C,0.80)(D,0.91)(E,0.66)(F,0.91)
+(G,0.45)(H,0.91)(I,0.61)(J,0.12)(K,0.31)(L,0.66)
+(M,0.22)(N,0.35)(O,0.35)(P,0.15)(Q,0.20)(R,0.18)
+(S,0.21)(T,0.22)(U,0.23)(V,0.08)(W,0.11)(X,0.17)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Error in the prediction of $U_S$ from several sampled cases within the jet with $\bv{r_S}$ known}
+\label{fig:typejetCU}
+\end{center}
+\end{figure}
+
+\subsection{Source Elevation Known}
+%This is the next logical step, and only the source elevation is known a priori.  \Cref{fig:typejetDT,fig:typejetDU,fig:typejetDX} are bar charts containing the error associated with predicting the source temperature, velocity, and axial location, respectively.  The charts are of the same selected cases of \cref{tab:jetcases}.  The error is significantly increased to higher than $9\%$ for predicting the source velocity.  Even an error of $9\%$ is still reasonable, but the methodology does not seem to function as well for the jet in a crossflow problem.  This is likely due to not utilizing an optimized search shape for the jet, even though nine sample points were used.  
+%
+%\Cref{fig:typejetEUTX} contains a plot of the predicted vs actual jet temperature.  \Cref{fig:typejetEXTU} is a similar plot for jet velocity.
+%
+\begin{figure}[!t!b!p]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    %ybar=5pt,
+    %bar width=7pt,
+    ybar=100pt,
+    bar width = 5pt,
+    x=0.4cm,
+    ymin=0,
+    axis on top,
+    ymax=5,
+    xtick=data,
+    xlabel={Selected Cases},
+	ylabel={Source temperature prediction error (\%)},
+%    enlarge x limits=0.2,
+    symbolic x coords={A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X},
+    restrict y to domain*=0:5.1, % Cut values off at 1.1
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    nodes near coords=\rotatebox{90}{%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    axis lines*=left,
+    clip=false
+    ]
+\addplot[black,fill=black!25] coordinates {
+(A,1.31)(B,2.11)(C,1.20)(D,3.28)(E,0.98)(F,0.78)
+(G,1.47)(H,1.46)(I,1.86)(J,2.13)(K,1.25)(L,0.86)
+(M,1.89)(N,1.86)(O,1.34)(P,0.45)(Q,1.12)(R,1.18)
+(S,1.66)(T,1.78)(U,0.87)(V,2.31)(W,1.02)(X,0.89)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Error in the prediction of $T_S$ from several sampled cases within the jet with source elevation known}
+\label{fig:typejetDT}
+\end{center}
+\end{figure}
+%
+\begin{figure}[!t!b!p]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    %ybar=5pt,
+    %bar width=7pt,
+    ybar=100pt,
+    bar width = 5pt,
+    x=0.4cm,
+    ymin=0,
+    axis on top,
+    ymax=10,
+    xtick=data,
+    xlabel={Selected Cases},
+	ylabel={Source velocity prediction error (\%)},
+%    enlarge x limits=5.2,
+    symbolic x coords={A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X},
+    restrict y to domain*=0:10.1, % Cut values off at 1.1
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    nodes near coords=\rotatebox{90}{%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    axis lines*=left,
+    clip=false
+    ]
+\addplot[black,fill=black!25] coordinates {
+(A,3.31)(B,5.87)(C,4.11)(D,9.01)(E,2.89)(F,2.78)
+(G,2.87)(H,3.56)(I,2.68)(J,4.23)(K,3.87)(L,2.95)
+(M,3.23)(N,4.45)(O,3.56)(P,2.08)(Q,4.33)(R,3.75)
+(S,2.97)(T,3.38)(U,2.99)(V,3.41)(W,4.12)(X,2.68)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Error in the prediction of $U_S$ from several sampled cases within the jet with source elevation known}
+\label{fig:typejetDU}
+\end{center}
+\end{figure}
+%
+\begin{figure}[!t!b!p]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    every axis plot post/.style={/pgf/number format/fixed},
+    %ybar=5pt,
+    %bar width=7pt,
+    ybar=100pt,
+    bar width = 5pt,
+    x=0.4cm,
+    ymin=0,
+    axis on top,
+    ymax=5,
+    xtick=data,
+    xlabel={Selected Cases},
+	ylabel={Source axial location prediction error (\%)},
+%    enlarge x limits=0.2,
+    symbolic x coords={A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X},
+    restrict y to domain*=0:5.1, % Cut values off at 1.1
+    visualization depends on=rawy\as\rawy, % Save the unclipped values
+    nodes near coords=\rotatebox{90}{%
+            \pgfmathprintnumber{\rawy}% Print unclipped values
+        },
+    axis lines*=left,
+    clip=false
+    ]
+\addplot[black,fill=black!25] coordinates {
+(A,3.31)(B,3.43)(C,4.03)(D,4.53)(E,2.22)(F,2.25)
+(G,1.89)(H,2.56)(I,2.68)(J,3.87)(K,3.68)(L,2.56)
+(M,3.14)(N,3.32)(O,2.77)(P,2.64)(Q,2.91)(R,3.23)
+(S,3.78)(T,3.45)(U,3.28)(V,4.31)(W,3.24)(X,1.98)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Error in the prediction of $x_S$ from several sampled cases within the jet with source elevation known}
+\label{fig:typejetDX}
+\end{center}
+\end{figure}
+
+
+\subsection{Source Location and Strength Unknown}
+%The last step with source location and strength unknown is not possible with the current search shape and methodology.  The issue in this case is the self-similar nature of a jet in a crossflow, where there are multiple solutions to the problem.  That is to say that the nine point search shape can converge on multiple solutions.  
+
+%This is similar to the problem with the plume in a crossflow prior to using the new optimized search shape.  In that problem, the solutions all had the same predicted source temperature, with different locations with the same search shape.  This problem has completely unique solutions with the same search shape.
+
+%When searching the domain for alternative solutions, a search space of $350-450\,K$ in $25\,K$ increments and $0-4\,m/s$ in $0.5\,m/s$ increments were used.  Take the `V' case for example, there are nine alternative solutions with less than $1\%$ error difference between the search shape temperatures.  \Cref{tab:alternatives} is a list of all of the alternatives, including the `V' case at the top of the table.  The alternatives seem to be discernible knowing the elevation, which is why the previous step was able to be resolved.
+
+\begin{table}[!t!b!p]
+\begin{center}
+\begin{tabular}{ l l l l l }
+\hline
+Axial    		& Elev.		& Jet		  	& Jet			& Search Shape \\
+Loc. $(mm)$ & Loc. $(mm)$	& Temp. $(K)$ 	& Vel. $(m/s)$	& Error $(\%)$\\ \hline
+20.0 &	3.0	&	425	&	2.0	&	0.00 \\ \hline
+10.0 &  3.7 &	375 &	2.5 &	0.60 \\
+12.0 &	5.1 &	375	&	3.0	&	0.34 \\
+14.8 &	2.7 &	400	&	2.0	&	0.30 \\
+16.3 &	4.5 &	400	&	2.5	&	0.26 \\
+19.5 &	5.9 &	400	&	3.0	&	0.29 \\
+21.8 &	5.0 &	425	&	2.5	&	0.24 \\
+25.6 &	6.5 &	425	&	3.0	&	0.34 \\
+25.2 &	3.2 &	450	&	2.0	&	0.13 \\
+26.8 &	5.4 &	450	&	2.5	&	0.25 \\
+\hline
+\end{tabular}
+\caption{Example alternative solutions}
+\label{tab:alternatives}
+\end{center}
+\end{table}
+
+\subsection{Experimental Results}
+%Due to the issue in determining the four unknowns, the experimental results are limited to finding only axial location and source strength.  The conditions of the experiments are shown in \cref{tab:ETjet}.  The results from a few select cases are shown in \cref{tab:typejetF}.  Due to the severe addition of error to the experimental results, the results are shown in a table format rather than the previously used bar graphs.
+
+%The error predicting the axial location is as high as $18.7\%$.  The error in predicting source velocity is as high as $21.8\%$.  The error for source temperature is as high as $13.7\%$.  These high error rates should be expected, as there are many contributing factors.  The search shape is not optimized for the jet, the number of sample points may not be enough, and the simulations do not exactly follow the experiment.  Even with these issues, the methodology was able to predict close to, if not within, experimental error.  Realize that $20\%$ of $1.0\,m/s$ is the accuracy of the experimental jet velocity.
+%
+%The comparison of actual vs predicted jet temperature and velocity is shown in \cref{fig:typejetEUTXEE} and \cref{fig:typejetEXTUEE}
+%
+\begin{table}[!t!b!p]
+\begin{center}
+\begin{tabular}{ c c }
+\hline
+Parameter    & Value \\ \hline
+$T_{\infty} \, (K) $ & $297.6\pm8.0$ \\
+$P_{\infty} \, (kPa) $ & $100.6\pm0.6$ \\ 
+$U_{\infty} \, (m/s) $ & $2.0\pm0.02$ \\ \hline
+\end{tabular}
+\caption{Experimental test conditions}
+\label{tab:ETjet}
+\end{center}
+\end{table}
+%
+\begin{table}[!h!t!b!p]
+\begin{center}
+\begin{tabular}{ l | l c c c c}
+\hline
+ $U_{S}$ $(m/s)$ & & 1.0 & 1.0 & 4.0 & 4.0 \\ \hline
+ $T_S$ $(K)$ & & 375 & 425 & 375 & 425  \\ \hline \hline
+ Location (x,y) & \\
+ 10 mm, 0 mm & X & $10.9\%$ & $11.7\%$ & $11.1\%$ & $13.8\%$ \\
+ 			 & U & $21.8\%$ & $18.6\%$ & $10.4\%$ & $11.9\%$ \\
+ 			 & T & $8.70\%$ & $9.87\%$ & $10.7\%$ & $12.9\%$ \\ \hline
+ 20 mm, 0 mm & X & $8.65\%$ & $7.65\%$ & $5.40\%$ & $9.81\%$ \\
+ 			 & U & $18.7\%$ & $19.8\%$ & $11.5\%$ & $12.1\%$ \\
+ 			 & T & $8.81\%$ & $10.7\%$ & $9.65\%$ & $10.2\%$ \\ \hline
+ 30 mm, 0 mm & X & $10.6\%$ & $10.4\%$ & $18.7\%$ & $9.78\%$ \\
+ 			 & U & $15.8\%$ & $17.9\%$ & $12.3\%$ & $13.7\%$ \\
+ 			 & T & $9.61\%$ & $8.64\%$ & $13.7\%$ & $10.1\%$ \\ \hline			 
+ \end{tabular}
+\caption{Error in predicting source axial location ($x_S$), source strength($U_S$ and $T_S$) from a few sample cases within the jet, search shape with 9pts, utilizing experimental data}
+\label{tab:typejetF}
+\end{center}
+\end{table}
 
 \section{Conclusions}
 
