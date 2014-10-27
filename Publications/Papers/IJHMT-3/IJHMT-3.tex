@@ -337,15 +337,78 @@ The final validation is comparing the simulation against the experiment.  This i
 \end{figure}
 
 \section{Inverse Solution Methodology}
-The basis for the solution strategy was described in a paper by \citet{ijhmt1}, which was originally intended to solve the inverse plume in a crosswind.  The original methodology solved for the 2-D location and source strength of a plume in a crossflow.  The jet in a crossflow must handle one additional parameter, the jet velocity.  Due to this extra parameter a modified version of the original solution strategy will be presented here.
+The basis for the solution strategy was described in a paper by \citet{ijhmt1}, which was originally intended to solve the inverse plume in a crosswind.  This methodology solved for the 2-D location and source strength of a plume in a crossflow.  The jet in a crossflow solver must handle one additional parameter, the jet velocity.  Therefore the methodology is required to be modified.  For completions sake, the original methodology will be briefly described here.
 
-\Citet{knight} used a quadratic response surface model to determine the jet temperature and jet velocity.  This method is not easily adapted to include unknown source location.
+The method assumed that we can neglect the variations in density, thermal buoyancy, and thermal radiation.  If this is true than the temperature of a given location ($T\left( \bv r \right)$) is linearly dependent upon the source temperature($T_S$) as shown in \cref{eq:linearset}.  The two parameters $m$ and $b$ are both location($\bv{r}$) dependent and may be calculated knowing a unique set of simulations $A$ and $B$.
+\begin{subequations}
+\label{eq:linearset}
+\begin{align}
+T_S &= m\left(  \bv r  \right) T\left( \bv r \right) + b\left( \bv r \right) \label{eq:linear} \\
+\bv r &= r\left( x, y\right) \label{eq:vector}\\
+\bv{r_i} & = \bv{r_0} + \bv{\Delta_i} \label{eq:delta}\\
+m\left( \bv r \right) &= \frac{T_{SA} - T_{SB}}{T_A \left( \bv r \right) - T_B\left( \bv r \right)} \label{eq:m} \\
+b\left( \bv r \right) &= T_{SA} - m\left( \bv r \right) T_A \left( \bv r \right) \label{eq:b}
+\end{align}
+\end{subequations}
+
+A few quick terms to make the following explanation easier.  Sample point: local static temperature from within the domain at a particular location.  Datum point: a selected sample point whose location will be defined as $\Delta_{0} = (0\,mm,0\,mm)$.  Search shape: relative location and pattern between a set of sample points and a datum point.
+
+The method attempts to minimize the discrepancies between all of the sample points' calculated source temperature and the datum point's calculated source temperature to get a predicted source temperature.  Then minimize the discrepancy between the predicted source temperature and a new set of sample point calculated source temperatures to get the corrected location and temperature.  The following equations mathematically describe the previous text.  \Cref{eq:F} is minimized and the location $\bv{r^{\ast}_{SP}}$ is used to calculate the predicted source temperature in \cref{eq:Tsp}.  Then \cref{eq:Fmod} is minimized and the location $\bv{r_{SP}}$ is calculated with \cref{eq:T} used to calculate $T_{SP}$.
+\begin{equation}
+\centering
+F\left( \bv r \right) =  \sum^{a}_{i=1} [ m\left( \bv r + \bv{\Delta_i}  \right) T\left( \bv{r_i} \right) +b\left( \bv r + \bv{\Delta_i} \right) -m\left( \bv r \right) T\left( \bv{r_0} \right) - b\left( \bv r \right) ]^2  
+\label{eq:F}
+\end{equation}
+%
+\begin{equation}
+\centering
+T^{\ast}_{SP} = \frac{1}{a} \{ \sum^{a}_{i=0} [ m\left( \bv{r^{\ast}_{SP}}+ \bv{\Delta_i}  \right) T\left( \bv{r_i} \right)  + b\left( \bv{r^{\ast}_{SP}}+ \bv{\Delta_i} \right) ] \}
+\label{eq:Tsp}
+\end{equation}
+%
+\begin{equation}
+\centering
+F_{mod}\left( \bv r \right) = \sum^{n}_{i=a} [ m\left( \bv r +\bv{\Delta_i} \right) T\left( \bv{r_i} \right) + b\left( \bv r + \bv{\Delta_i} \right)-T^{\ast}_{SP} ]^2
+\label{eq:Fmod}
+\end{equation}
+%
+\begin{equation}
+\centering
+T_{SP} = \frac{1}{n-a} \{ \sum^{n-a}_{i=a} [ m\left( \bv{r_{SP}}+ \bv{\Delta_i} \right) T\left( \bv{r_i}\right)  + b\left( \bv{r_{SP}}+ \bv{\Delta_i}  \right) ] \}
+\label{eq:T}
+\end{equation}
+
+The number and pattern of the sample points (i.e. the search shape) was optimized in a paper by \citet{ijhmt2}.  In it three sample points were identified as being enough to solve the inverse plume problem.  The three points were later shown that they did not handle error very well and the optimization process was continued to include nine sample points.  They are shown in \cref{tab:expoptresults}.
+\begin{table}[!h!t!b!p]
+\begin{center}
+\begin{tabular}{ c c }
+\hline
+ Sample Point & $\bv{\Delta} \, (mm)$  \\ \hline 
+0 & (0.0, 0.0) \\
+1 & (1.7, 3.5) \\
+2 & (2.8, 0.6) \\  
+3 & (0.5, 1.1) \\
+4 & (2.1, 1.0) \\ 
+5 & (2.3, 2.0) \\
+6 & (1.2, 0.8) \\
+7 & (3.1, 0.7) \\
+8 & (0.8, 2.1) \\ \hline
+ \end{tabular}
+\caption{Search shape results of averaging over the domain with increasing the sample size to 9}
+\label{tab:expoptresults}
+\end{center}
+\end{table}
+
+Continuing with the inverse jet in a crossflow problem, \citet{knight} used a quadratic response surface model to determine the jet temperature and jet velocity.  This method is not easily adapted to include unknown source location.
+
 
 
 
 
 
 \section{Results and discussions}
+Due to the new methodology
+
 
 %An incremental approach to solving the jet problem was used.  Starting with the simplest cases working towards the most difficult, and finally adding in the complexity that is the experimental results.    There are twenty-four selected cases used to demonstrate the capabilities of the described methodology.  The cases are labeled A-X, and the conditions are listed in \cref{tab:jetcases}.  Non-varying parameters are listed in \cref{tab:STjet}.
 %
