@@ -353,7 +353,7 @@ b\left( \bv r \right) &= T_{SA} - m\left( \bv r \right) T_A \left( \bv r \right)
 
 A few quick terms to make the following explanation easier.  Sample point: local static temperature from within the domain at a particular location.  Datum point: a selected sample point whose location will be defined as $\Delta_{0} = (0\,mm,0\,mm)$.  Search shape: relative location and pattern between a set of sample points and a datum point.
 
-The method attempts to minimize the discrepancies between all of the sample points' calculated source temperature and the datum point's calculated source temperature to get a predicted source temperature.  Then minimize the discrepancy between the predicted source temperature and a new set of sample point calculated source temperatures to get the corrected location and temperature.  The following equations mathematically describe the previous text.  \Cref{eq:F} is minimized and the location $\bv{r^{\ast}_{SP}}$ is used to calculate the predicted source temperature in \cref{eq:Tsp}.  Then \cref{eq:Fmod} is minimized and the location $\bv{r_{SP}}$ is calculated with \cref{eq:T} used to calculate $T_{SP}$.
+Start by selecting $n$ sample points and $d$ simulations.  The method attempts to minimize the discrepancies between all of the sample points' calculated source temperature and the datum point's calculated source temperature to get a predicted source temperature.  Then minimize the discrepancy between the predicted source temperature and a new set of sample point calculated source temperatures to get the corrected location and temperature.  The following equations mathematically describe the previous text.  \Cref{eq:F} is minimized and the location $\bv{r^{\ast}_{SP}}$ is used to calculate the predicted source temperature in \cref{eq:Tsp}.  Then \cref{eq:Fmod} is minimized and the location $\bv{r_{SP}}$ is calculated with \cref{eq:T} used to calculate $T_{SP}$.  Where $a$ is the number of sample points used in the prediction step and $n$ is the total number of sample points.
 \begin{equation}
 \centering
 F\left( \bv r \right) =  \sum^{a}_{i=1} [ m\left( \bv r + \bv{\Delta_i}  \right) T\left( \bv{r_i} \right) +b\left( \bv r + \bv{\Delta_i} \right) -m\left( \bv r \right) T\left( \bv{r_0} \right) - b\left( \bv r \right) ]^2  
@@ -399,15 +399,51 @@ The number and pattern of the sample points (i.e. the search shape) was optimize
 \end{center}
 \end{table}
 
-Continuing with the inverse jet in a crossflow problem, \citet{knight} used a quadratic response surface model to determine the jet temperature and jet velocity.  This method is not easily adapted to include unknown source location.
+Going back to the inverse jet in a crossflow problem, \citet{knight} used a quadratic response surface model to determine the jet temperature and jet velocity.  While the response surface is not directly useful in finding the location, knowing the jet velocity is quadratic and the temperature is linear is.
+
+The method starts similar to the original method, select $n$ sample points and $d$ simulations spanning the thermal and velocity region of interest.  Guess a jet velocity ($U_S$) so the parameters are not dependent upon the jet velocity.  Calculate the parameters $m$ and $b$ from \cref{eq:linearset}.  Find the minimization of \cref{eq:F} in which we can find a predicted \cref{eq:Tsp}.  We can develop an equation similar to \cref{eq:F} for the jet velocity.  Starting with \cref{eq:Us}, we can minimize the discrepancy between the predicted jet velocities resulting in \cref{eq:G}.  As would be expected there are three parameters needed ($\Gamma_0 ..\Gamma_2$).  The minimization of $G$ allows to calculated $U_S$ from \cref{eq:Usp}.  A flowchart of the methodology is shown in \cref{fig:flowchartjet}.
 
 
 
+\begin{equation}
+\centering
+U_S = \Gamma_2 \left(\bv r \right) T\left( \bv r \right)^2 +  \Gamma_1 \left(\bv r \right) T\left( \bv r \right) + \Gamma_0 \left(\bv r \right)
+\label{eq:Us}
+\end{equation}
+%
+\begin{equation}
+\centering
+\begin{split}
+G\left( \bv r \right) =  \sum^{n}_{i=a} [ &\Gamma_2\left( \bv r + \bv{\Delta_i}  \right) T\left( \bv{r_i} \right)^2 \\
+&+\Gamma_1\left( \bv r + \bv{\Delta_i}  \right) T\left( \bv{r_i} \right) \\
+&+\Gamma_0\left( \bv r + \bv{\Delta_i} \right) \\
+&-\Gamma_2\left( \bv r \right) T\left( \bv{r_0} \right)^2 \\
+&-\Gamma_1\left( \bv r \right) T\left( \bv{r_0} \right)\\
+&- \Gamma_0\left( \bv r \right) ]^2  
+\label{eq:G}
+\end{split}
+\end{equation}
+%
+\begin{equation}
+\centering
+\begin{split}
+U_{SP} = \frac{1}{n-a} \{ \sum^{n-a}_{i=a} [ &\Gamma_2 \left( \bv{r_{SP}}+ \bv{\Delta_i} \right) T\left( \bv{r_i}\right)^2  \\
+&+\Gamma_1 \left( \bv{r_{SP}}+ \bv{\Delta_i} \right) T\left( \bv{r_i}\right) \\
+&+ \Gamma_0\left( \bv{r_{SP}}+ \bv{\Delta_i}  \right) ] \}
+\label{eq:Usp}
+\end{split}
+\end{equation}
 
+\begin{figure}[!tbp]
+\centering
+\input{flowchartjet}
+\caption{Flow chart of the predictor - corrector methodology for a jet in a crossflow}
+\label{fig:flowchartjet}
+\end{figure}
 
 
 \section{Results and discussions}
-Due to the new methodology
+Due to the new methodology an incremental approach to solving the problem was used.  Working from the simplest cases and move towards the more difficult cases, ending with the experimental results.  Twenty-four selected cases are used to demonstrate the capabilities and weaknesses of the described methodology.  The cases are labeled A-X, the conditions of the selected cases are described in \cref{tab:jetcases} with the constant parameters in \cref{tab:STjet}.  For example, case T has a datum at $20\,mm$ downstream, $3\,mm$ above the surface, jet velocity of $1\,m/s$, and jet temperature of $425\,K$.
 
 
 %An incremental approach to solving the jet problem was used.  Starting with the simplest cases working towards the most difficult, and finally adding in the complexity that is the experimental results.    There are twenty-four selected cases used to demonstrate the capabilities of the described methodology.  The cases are labeled A-X, and the conditions are listed in \cref{tab:jetcases}.  Non-varying parameters are listed in \cref{tab:STjet}.
@@ -443,9 +479,12 @@ $P_{\infty} \, (kPa) $ & $101.3$ \\ \hline
 \end{center}
 \end{table}
 
-%The next two steps utilize a single sample point, however, the rest use the nine sample points listed in \cref{tab:expoptresults}.  The search shape used here is the optimized search shape for a plume with all nine sample points included.  Utilizing a jet optimized search shape may yield better results.
+The next two steps utilize a single sample point, however, the rest use the nine sample points listed in \cref{tab:expoptresults}.  The search shape used here is the optimized search shape for a plume with all nine sample points included.  Utilizing a jet optimized search shape may yield better results.
 
 \subsection{Source Location and Velocity Known}
+The first condition of unknown source temperature, the methodology breaks down to a linear equation, \cref{eq:linear}.  Due to the simple linear equation a single sample point is needed to solve the inverse problem.  The results of the selected cases are shown in \cref{fig:typejetAT}.  The error is typically less than $0.1\%$.  There are four cases with large error and they are located outside or near the edge of the jet.  The temperature at these locations is near the ambient temperature and the Matlab polynomial curve fit has issues with the data points very similar to each other.  The error is calculated using \cref{eq:error}.
+
+
 
 %The first step is unknown source temperature, the methodology breaks down to a simple linear equation similar to that of the plume case.  The linear equation allows the use of a single sample point to solve the inverse problem.  The results of the selected cases are shown in \cref{fig:typejetAT}.  The error is typically less than $0.1\%$, except in four cases.  The four cases with large error are located outside or near the edge of the jet.  The temperature at these locations is near ambient and the Matlab polynomial curve fit has issues with the data points very similar to each other, often giving results of magnitude $10^{\pm10}$ or worse.  What this means is that the error for these four points is essentially caused by machine error.
 
@@ -487,8 +526,17 @@ $P_{\infty} \, (kPa) $ & $101.3$ \\ \hline
 \label{fig:typejetAT}
 \end{center}
 \end{figure}
+\begin{subequations}
+\begin{align}
+error_{temp} (\%) &= \frac{\left|T_{SP}-T_S\right| }{T_S-T_{\infty}} \times 100 \\
+error_{x-location} (\%) &= \frac{\left|x_{SP}-x_S\right|}{x_S} \times 100 \\
+error_{y-location} (\%) &= \frac{\left|y_{SP}-y_S\right|}{y_S} \times 100 
+\end{align}
+\label{eq:error}
+\end{subequations}
 
 \subsection{Source Location and Temperature Known}
+The second case is of unknown jet velocity and is also simple and breaks down to \cref{eq:Us}.  As the quadratic equation does not perfectly model the velocity profile, but the error is still reasonably as shown in \cref{fig:typejetBU}.  The error is less than $\approx1\%$, which is likely less than that of any experimental error.
 %Another simple case is that of the when the source velocity is not known.  This step also breaks down to a relatively simple equation, but this time the equation is that of \cref{eq:Us} and thus  quadratic.  This particular equation does not perfectly model the velocity profile, but as is seen in \cref{fig:typejetBU}, it is still good.  The error associated with this is never more than $\approx1\%$, which is likely less than that of any experimental error.  In this case, it is certainly less than the experimental error.  Again, the simulation parameters are described in \cref{tab:jetcases,tab:STjet}.
 \begin{figure}[!t!b!p]
 \begin{center}
@@ -530,6 +578,9 @@ $P_{\infty} \, (kPa) $ & $101.3$ \\ \hline
 \end{figure}
 
 \subsection{Source Location Known}
+With only the jet location known the method would ideally breakdown to the response surface model of \citet{knight}.  However, the methodology has the jet temperature and jet velocity solved iteratively and must still be solved in such a manner.  The errors of the selected cases are shown in \cref{fig:typejetCT,fig:typejetCU}.  Several of the cases had a decrease in error due to the increase from one sample point to nine.
+
+
 %Step three is a bit more complicated.  The method would ideally breakdown to that of the response surface model of \citet{knight}.  This however, cannot be the case as the methodology has the two equations separated and thus, they still need to be solved iteratively.  The selected cases are shown in \cref{fig:typejetCT,fig:typejetCU}, and are of the error in predicting the source temperature and velocity.  A few of the selected cases improved in accuracy due to the increase in the number of sample points.
 
 \begin{figure}[!t!b!p]
@@ -611,6 +662,7 @@ $P_{\infty} \, (kPa) $ & $101.3$ \\ \hline
 \end{figure}
 
 \subsection{Source Elevation Known}
+
 %This is the next logical step, and only the source elevation is known a priori.  \Cref{fig:typejetDT,fig:typejetDU,fig:typejetDX} are bar charts containing the error associated with predicting the source temperature, velocity, and axial location, respectively.  The charts are of the same selected cases of \cref{tab:jetcases}.  The error is significantly increased to higher than $9\%$ for predicting the source velocity.  Even an error of $9\%$ is still reasonable, but the methodology does not seem to function as well for the jet in a crossflow problem.  This is likely due to not utilizing an optimized search shape for the jet, even though nine sample points were used.  
 %
 %\Cref{fig:typejetEUTX} contains a plot of the predicted vs actual jet temperature.  \Cref{fig:typejetEXTU} is a similar plot for jet velocity.
